@@ -1,0 +1,33 @@
+# ------------------------------------------------------------------
+# Web server rules for the portfolio (Apache / XAMPP).
+# ------------------------------------------------------------------
+
+# No directory listings.
+Options -Indexes
+
+# Never serve hidden files (.git, .htaccess, ...).
+<FilesMatch "^\.">
+    Require all denied
+</FilesMatch>
+
+# Never serve source, config, data, or tooling files directly.
+<FilesMatch "\.(ini|log|sql|md|py|sh|lock|json|dist|bak)$">
+    Require all denied
+</FilesMatch>
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    # Private folders: application code, database scripts, tooling, dependencies, git.
+    RewriteRule ^(app|database|scripts|vendor|\.git)(/|$) - [F,L]
+</IfModule>
+
+# Security headers.
+<IfModule mod_headers.c>
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set X-Frame-Options "SAMEORIGIN"
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+    Header always set Permissions-Policy "camera=(), microphone=(), geolocation=()"
+    Header unset X-Powered-By
+</IfModule>
+
+ServerSignature Off

@@ -1,33 +1,25 @@
 <?php
-require_once __DIR__ . '/../config/database.php';
-require_once __DIR__ . '/../includes/functions.php';
+require __DIR__ . '/../app/bootstrap.php';
+require_admin();
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    verify_csrf(true);
+if (is_post()) {
+    verify_csrf();
+    $id = (int) ($_POST['id'] ?? 0);
 
-    if (isset($_POST['read'])) {
-        $statement = $pdo->prepare(
-            "UPDATE messages SET status = 'read' WHERE id = ?"
-        );
-        $statement->execute([(int) $_POST['read']]);
-    }
+    match ($_POST['action'] ?? '') {
+        'read' => db_query("UPDATE messages SET status = 'read' WHERE id = ?", [$id]),
+        'delete' => db_query('DELETE FROM messages WHERE id = ?', [$id]),
+        default => null,
+    };
 
-    if (isset($_POST['delete'])) {
-        $statement = $pdo->prepare('DELETE FROM messages WHERE id = ?');
-        $statement->execute([(int) $_POST['delete']]);
-    }
-
-    redirect('messages.php');
+    redirect('admin/messages.php');
 }
 
 $adminTitle = 'Messages';
-$messages = $pdo->query(
-    'SELECT * FROM messages ORDER BY created_at DESC'
-)->fetchAll();
+$messages = db_query('SELECT * FROM messages ORDER BY created_at DESC')->fetchAll();
 
-require __DIR__ . '/includes/header.php';
+require APP_PATH . '/views/admin/header.php';
 ?>
-
 <div class="admin-page-header mb-4">
     <div>
         <div class="section-kicker">Inbox</div>
@@ -37,11 +29,7 @@ require __DIR__ . '/includes/header.php';
 
 <div class="row g-3">
     <?php if (!$messages): ?>
-        <div class="col-12">
-            <div class="soft-panel">
-                <p class="muted mb-0">No contact messages yet.</p>
-            </div>
-        </div>
+        <div class="col-12"><div class="soft-panel"><p class="muted mb-0">No contact messages yet.</p></div></div>
     <?php endif; ?>
 
     <?php foreach ($messages as $message): ?>
@@ -49,52 +37,25 @@ require __DIR__ . '/includes/header.php';
             <article class="soft-panel h-100">
                 <div class="d-flex justify-content-between gap-3">
                     <strong><?= e($message['subject']) ?></strong>
-                    <small class="muted">
-                        <?= e($message['created_at']) ?>
-                    </small>
+                    <small class="muted text-nowrap"><?= e($message['created_at']) ?></small>
                 </div>
                 <p class="muted mb-2">
                     <?= e($message['name']) ?> ·
-                    <?= e($message['email']) ?> ·
-                    <span
-                        class="badge text-bg-<?= $message['status'] === 'unread'
-                            ? 'warning'
-                            : 'success' ?>"
-                    >
-                        <?= e($message['status']) ?>
-                    </span>
+                    <a href="mailto:<?= e($message['email']) ?>"><?= e($message['email']) ?></a> ·
+                    <span class="badge text-bg-<?= $message['status'] === 'unread' ? 'warning' : 'success' ?>"><?= e($message['status']) ?></span>
                 </p>
                 <p><?= nl2br(e($message['message'])) ?></p>
 
                 <form method="post" class="d-flex gap-2">
-                    <input
-                        type="hidden"
-                        name="csrf"
-                        value="<?= e(csrf_token()) ?>"
-                    >
+                    <?= csrf_field() ?>
+                    <input type="hidden" name="id" value="<?= (int) $message['id'] ?>">
                     <?php if ($message['status'] === 'unread'): ?>
-                        <button
-                            class="btn btn-sm btn-outline-dark"
-                            name="read"
-                            value="<?= (int) $message['id'] ?>"
-                            type="submit"
-                        >
-                            Mark read
-                        </button>
+                        <button class="btn btn-sm btn-outline-dark" name="action" value="read" type="submit">Mark read</button>
                     <?php endif; ?>
-                    <button
-                        class="btn btn-sm btn-outline-danger"
-                        name="delete"
-                        value="<?= (int) $message['id'] ?>"
-                        type="submit"
-                        data-confirm="Delete this message?"
-                    >
-                        Delete
-                    </button>
+                    <button class="btn btn-sm btn-outline-danger" name="action" value="delete" type="submit" data-confirm="Delete this message?">Delete</button>
                 </form>
             </article>
         </div>
     <?php endforeach; ?>
 </div>
-
-<?php require __DIR__ . '/includes/footer.php'; ?>
+<?php require APP_PATH . '/views/admin/footer.php'; ?>

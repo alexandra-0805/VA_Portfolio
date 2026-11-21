@@ -1,15 +1,11 @@
 <?php
-require_once __DIR__ . '/config/database.php';
+require __DIR__ . '/app/bootstrap.php';
 
 $pageTitle = 'About Alexandra | Portfolio';
 $activePage = 'about';
-$certificates = $pdo->query(
-    'SELECT MIN(id) AS id, title, issuer, date, image, url, description '
-        . 'FROM certificates GROUP BY title, issuer, date, image, url, description '
-        . 'ORDER BY MAX(created_at) DESC'
-)->fetchAll();
+$certificates = get_certificates();
 
-require __DIR__ . '/includes/header.php';
+require APP_PATH . '/views/site/header.php';
 ?>
 
 <section class="page-banner">
@@ -36,11 +32,11 @@ require __DIR__ . '/includes/header.php';
 
             <div class="col-lg-7 about-copy">
                 <p class="about-lead">
-                    Alexandra Concepcion has knowledge in Virtual Assistance, Data Entry, Customer Service,
-                    IT Service Management, and Basic Web Development in Cavite, Philippines.
+                    I'm a Virtual Assistant in Cavite, Philippines, with knowledge in data entry,
+                    customer service, IT service management, and basic web development.
                 </p>
                 <p class="muted">
-                    She's bring together customer communication, business operations,
+                    I bring together customer communication, business operations,
                     digital content, and basic web development. I am detail-oriented,
                     adaptable, organized, and comfortable learning new tools quickly.
                 </p>
@@ -91,7 +87,8 @@ require __DIR__ . '/includes/header.php';
                             class="certificate-card p-4 h-100"
                             role="button"
                             tabindex="0"
-                            data-certificate-image="<?= e($certificate['image']) ?>"
+                            data-certificate-image="<?= e(media_url($certificate['image'])) ?>"
+                            data-certificate-link="<?= e(safe_url((string) $certificate['url'])) ?>"
                             data-certificate-title="<?= e($certificate['title']) ?>"
                             aria-label="View <?= e($certificate['title']) ?> certificate">
                             <i
@@ -139,4 +136,4 @@ require __DIR__ . '/includes/header.php';
     </div>
 </div>
 
-<?php require __DIR__ . '/includes/footer.php'; ?>
+<?php require APP_PATH . '/views/site/footer.php'; ?>

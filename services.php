@@ -1,15 +1,11 @@
 <?php
-require_once __DIR__ . '/config/database.php';
+require __DIR__ . '/app/bootstrap.php';
 
 $pageTitle = 'Services | Alexandra Concepcion';
 $activePage = 'services';
-$services = $pdo->query(
-    'SELECT MIN(id) AS id, title, description, icon '
-    . 'FROM services GROUP BY title, description, icon '
-    . 'ORDER BY title'
-)->fetchAll();
+$services = get_services();
 
-require __DIR__ . '/includes/header.php';
+require APP_PATH . '/views/site/header.php';
 ?>
 
 <section class="page-banner">
@@ -17,8 +13,7 @@ require __DIR__ . '/includes/header.php';
         <div class="section-kicker mb-3">Services</div>
         <h1 class="section-title">Support that keeps <span>things moving.</span></h1>
         <p class="hero-copy mt-4">
-            Flexible help across administration, content, customer care, and
-            digital projects.
+            Flexible help across administration, content, customer care, and digital projects.
         </p>
     </div>
 </section>
@@ -32,20 +27,22 @@ require __DIR__ . '/includes/header.php';
             </p>
         </div>
 
-        <div class="row g-4">
-            <?php foreach ($services as $service): ?>
-                <div class="col-md-6 col-lg-4 animate">
-                    <article class="service-card">
-                        <div class="service-icon" aria-hidden="true">
-                            <i class="bi <?= e($service['icon']) ?>"></i>
-                        </div>
-                        <h2 class="h3"><?= e($service['title']) ?></h2>
-                        <p><?= e($service['description']) ?></p>
-                    </article>
-                </div>
-            <?php endforeach; ?>
-        </div>
+        <?php if ($services): ?>
+            <div class="row g-4">
+                <?php foreach ($services as $service): ?>
+                    <div class="col-md-6 col-lg-4 animate">
+                        <article class="service-card">
+                            <div class="service-icon" aria-hidden="true"><i class="bi <?= e($service['icon']) ?>"></i></div>
+                            <h2 class="h3"><?= e($service['title']) ?></h2>
+                            <p><?= e($service['description']) ?></p>
+                        </article>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+        <?php else: ?>
+            <p class="empty-state">Services will be listed here soon.</p>
+        <?php endif; ?>
     </div>
 </section>
 
-<?php require __DIR__ . '/includes/footer.php'; ?>
+<?php require APP_PATH . '/views/site/footer.php'; ?>

@@ -1,6 +1,11 @@
 <?php
+require __DIR__ . '/app/bootstrap.php';
+
 $pageTitle = 'Resume | Alexandra Concepcion';
-require __DIR__ . '/includes/header.php';
+$activePage = 'resume';
+$site = config('site');
+
+require APP_PATH . '/views/site/header.php';
 ?>
 
 <section class="resume-hero">
@@ -10,9 +15,9 @@ require __DIR__ . '/includes/header.php';
                 <div class="section-kicker mb-3">
                     Resume / Professional profile
                 </div>
-                <h2 class="resume-name">
+                <h1 class="resume-name">
                     Alexandra Lykemae T. <span>Concepcion</span>
-                </h2>
+                </h1>
                 <p class="resume-role">
                     Virtual Assistant <span>/</span> Admin Support
                     <span>/</span> Digital Assistant
@@ -20,15 +25,15 @@ require __DIR__ . '/includes/header.php';
                 <div class="resume-contact" aria-label="Contact information">
                     <span>
                         <i class="bi bi-geo-alt" aria-hidden="true"></i>
-                        Cavite, Philippines
+                        <?= e($site['location']) ?>
                     </span>
-                    <a href="mailto:lykemaeconcepcion@gmail.com">
+                    <a href="mailto:<?= e($site['email']) ?>">
                         <i class="bi bi-envelope" aria-hidden="true"></i>
-                        lykemaeconcepcion@gmail.com
+                        <?= e($site['email']) ?>
                     </a>
                     <span>
                         <i class="bi bi-phone" aria-hidden="true"></i>
-                        +63 994 098 0220
+                        <?= e($site['phone']) ?>
                     </span>
                 </div>
             </div>
@@ -37,7 +42,7 @@ require __DIR__ . '/includes/header.php';
                 <span class="resume-action-label">Ready to work together?</span>
                 <a
                     class="btn btn-primary"
-                    href="assets/Alexandra_Concepcion.pdf"
+                    href="<?= e(asset($site['resume_pdf'])) ?>"
                     download
                     aria-label="Download resume as PDF"
                 >
@@ -52,7 +57,7 @@ require __DIR__ . '/includes/header.php';
 <section class="resume-content">
     <div class="container">
         <div class="resume-grid">
-            <main>
+            <div>
                 <section class="resume-section resume-summary animate">
                     <div class="resume-section-heading">
                         <span class="resume-number">01</span>
@@ -118,7 +123,7 @@ require __DIR__ . '/includes/header.php';
                         </ul>
                     </div>
                 </section>
-            </main>
+            </div>
 
             <aside>
                 <section class="resume-section resume-side animate">
@@ -191,4 +196,4 @@ require __DIR__ . '/includes/header.php';
     </div>
 </section>
 
-<?php require __DIR__ . '/includes/footer.php'; ?>
+<?php require APP_PATH . '/views/site/footer.php'; ?>

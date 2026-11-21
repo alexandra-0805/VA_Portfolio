@@ -1,6 +1,4 @@
 <?php
-require_once __DIR__ . '/../includes/functions.php';
+require __DIR__ . '/../app/bootstrap.php';
 
-$destination = is_admin() ? 'dashboard.php' : 'signin.php';
-header('Location: ' . $destination);
-exit;
+redirect(is_admin() ? 'admin/dashboard.php' : 'admin/auth/signin.php');

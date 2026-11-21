@@ -1,0 +1,24 @@
+# Secrets never live in this project: they are in <xampp>/private/va_portfolio/config.php.
+# These rules are a safety net in case a secret file is ever created here by mistake.
+.env
+.env.*
+*.secret.php
+app/config.local.php
+
+# Database backups / dumps
+*.sql.gz
+database/backups/
+
+# User uploads (keep the folder and its security rules)
+uploads/*
+!uploads/.htaccess
+!uploads/certificates/
+uploads/certificates/*
+!uploads/certificates/7a594800a37aa8d7d986f2c5.png
+
+# Logs, OS and editor files
+*.log
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

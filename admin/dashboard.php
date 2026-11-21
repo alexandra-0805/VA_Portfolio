@@ -1,41 +1,19 @@
 <?php
-require_once __DIR__ . '/../config/database.php';
+require __DIR__ . '/../app/bootstrap.php';
+require_admin();
 
 $adminTitle = 'Dashboard';
 $counts = [];
-$countQueries = [
-    'projects' => 'SELECT COUNT(*) FROM ('
-        . 'SELECT title, description, technologies, image, project_url '
-        . 'FROM projects GROUP BY title, description, technologies, image, project_url'
-        . ') AS unique_projects',
-    'skills' => 'SELECT COUNT(*) FROM ('
-        . 'SELECT name, category, proficiency '
-        . 'FROM skills GROUP BY name, category, proficiency'
-        . ') AS unique_skills',
-    'services' => 'SELECT COUNT(*) FROM ('
-        . 'SELECT title, description, icon '
-        . 'FROM services GROUP BY title, description, icon'
-        . ') AS unique_services',
-    'messages' => 'SELECT COUNT(*) FROM messages',
-    'certificates' => 'SELECT COUNT(*) FROM ('
-        . 'SELECT title, issuer, date, image, description '
-        . 'FROM certificates GROUP BY title, issuer, date, image, description'
-        . ') AS unique_certificates',
-];
 
-foreach ($countQueries as $key => $query) {
-    $counts[$key] = (int) $pdo->query($query)->fetchColumn();
+foreach (['projects', 'skills', 'services', 'messages', 'certificates'] as $table) {
+    $counts[$table] = (int) db_query("SELECT COUNT(*) FROM {$table}")->fetchColumn();
 }
 
-$unreadMessages = (int) $pdo
-    ->query("SELECT COUNT(*) FROM messages WHERE status = 'unread'")
-    ->fetchColumn();
+$unreadMessages = (int) db_query("SELECT COUNT(*) FROM messages WHERE status = 'unread'")->fetchColumn();
 
 $analytics = [
     'total_content' => array_sum($counts) - $counts['messages'],
-    'average_skill' => (float) ($pdo
-        ->query('SELECT COALESCE(AVG(proficiency), 0) FROM skills')
-        ->fetchColumn()),
+    'average_skill' => (float) db_query('SELECT COALESCE(AVG(proficiency), 0) FROM skills')->fetchColumn(),
     'read_messages' => $counts['messages'] - $unreadMessages,
 ];
 $analytics['response_rate'] = $counts['messages'] > 0
@@ -45,35 +23,24 @@ $analytics['response_rate'] = $counts['messages'] > 0
 $messageTrend = [];
 $trendStart = new DateTimeImmutable('first day of -5 months 00:00:00');
 $trendEnd = new DateTimeImmutable('first day of next month 00:00:00');
-$trendStatement = $pdo->prepare(
-    'SELECT DATE_FORMAT(created_at, "%Y-%m") AS month_key, COUNT(*) AS total '
-    . 'FROM messages WHERE created_at >= ? AND created_at < ? '
-    . 'GROUP BY month_key ORDER BY month_key'
-);
-$trendStatement->execute([
-    $trendStart->format('Y-m-d H:i:s'),
-    $trendEnd->format('Y-m-d H:i:s'),
-]);
-$trendRows = $trendStatement->fetchAll();
-$trendLookup = [];
-foreach ($trendRows as $trendRow) {
-    $trendLookup[$trendRow['month_key']] = (int) $trendRow['total'];
-}
+$trendLookup = db_query(
+    "SELECT DATE_FORMAT(created_at, '%Y-%m') AS month_key, COUNT(*) AS total "
+    . 'FROM messages WHERE created_at >= ? AND created_at < ? GROUP BY month_key',
+    [$trendStart->format('Y-m-d H:i:s'), $trendEnd->format('Y-m-d H:i:s')]
+)->fetchAll(PDO::FETCH_KEY_PAIR);
+
 for ($month = $trendStart; $month < $trendEnd; $month = $month->modify('+1 month')) {
-    $monthKey = $month->format('Y-m');
-    $messageTrend[] = [
-        'label' => $month->format('M'),
-        'total' => $trendLookup[$monthKey] ?? 0,
-    ];
+    $messageTrend[] = ['label' => $month->format('M'), 'total' => (int) ($trendLookup[$month->format('Y-m')] ?? 0)];
 }
+
+// Chart coordinates for each month (x across, y scaled to the busiest month).
 $maxTrend = max(array_column($messageTrend, 'total')) ?: 1;
-$trendPoints = [];
-foreach ($messageTrend as $index => $month) {
-    $x = 48 + ($index * 100);
-    $y = 180 - (($month['total'] / $maxTrend) * 135);
-    $trendPoints[] = round($x) . ',' . round($y);
+foreach ($messageTrend as $index => &$month) {
+    $month['x'] = 48 + ($index * 100);
+    $month['y'] = (int) round(180 - (($month['total'] / $maxTrend) * 135));
 }
-$trendPolyline = implode(' ', $trendPoints);
+unset($month);
+$trendPolyline = implode(' ', array_map(static fn ($month) => $month['x'] . ',' . $month['y'], $messageTrend));
 
 $contentMix = [
     ['label' => 'Projects', 'value' => $counts['projects'], 'icon' => 'bi-grid'],
@@ -93,7 +60,7 @@ $dashboardCards = [
     ['key' => 'resume', 'label' => 'Resume', 'icon' => 'bi-file-earmark-person', 'url' => 'resume.php', 'value' => 'PDF'],
 ];
 
-require __DIR__ . '/includes/header.php';
+require APP_PATH . '/views/admin/header.php';
 ?>
 
 <div class="admin-page-header mb-5">
@@ -228,12 +195,9 @@ require __DIR__ . '/includes/header.php';
                             fill="none"
                             stroke="currentColor"
                         ></polyline>
-                        <?php foreach ($messageTrend as $index => $month): ?>
-                            <?php
-                            $x = 48 + ($index * 100);
-                            $y = 180 - (($month['total'] / $maxTrend) * 135);
-                            ?>
-                            <circle class="analytics-point" cx="<?= $x ?>" cy="<?= round($y) ?>" r="5">
+                        <?php foreach ($messageTrend as $month): ?>
+                            <?php ['x' => $x, 'y' => $y] = $month; ?>
+                            <circle class="analytics-point" cx="<?= $x ?>" cy="<?= $y ?>" r="5">
                                 <title><?= e($month['label'] . ': ' . $month['total'] . ' messages') ?></title>
                             </circle>
                             <text class="analytics-chart-label" x="<?= $x ?>" y="210" text-anchor="middle">
@@ -281,4 +245,4 @@ require __DIR__ . '/includes/header.php';
     </div>
 </section>
 
-<?php require __DIR__ . '/includes/footer.php'; ?>
+<?php require APP_PATH . '/views/admin/footer.php'; ?>

@@ -1,15 +1,12 @@
 <?php
-require_once __DIR__ . '/../config/database.php';
-require_once __DIR__ . '/../includes/functions.php';
+require __DIR__ . '/../app/bootstrap.php';
+require_admin();
 
 $adminTitle = 'Reports';
-$status = $_GET['status'] ?? 'all';
 $allowedStatuses = ['all', 'unread', 'read'];
-if (!in_array($status, $allowedStatuses, true)) {
-    $status = 'all';
-}
-$dateFrom = trim($_GET['date_from'] ?? '');
-$dateTo = trim($_GET['date_to'] ?? '');
+$status = in_array($_GET['status'] ?? '', $allowedStatuses, true) ? $_GET['status'] : 'all';
+$dateFrom = is_string($_GET['date_from'] ?? null) ? trim($_GET['date_from']) : '';
+$dateTo = is_string($_GET['date_to'] ?? null) ? trim($_GET['date_to']) : '';
 $filters = [];
 $parameters = [];
 
@@ -33,20 +30,16 @@ if (preg_match('/^\\d{4}-\\d{2}-\\d{2}$/', $dateTo)) {
 }
 
 $whereClause = $filters ? ' WHERE ' . implode(' AND ', $filters) : '';
-$messageStatement = $pdo->prepare(
-    'SELECT id, name, email, subject, status, created_at '
-    . 'FROM messages' . $whereClause . ' ORDER BY created_at DESC'
-);
-$messageStatement->execute($parameters);
-$messages = $messageStatement->fetchAll();
+$messages = db_query(
+    'SELECT id, name, email, subject, status, created_at FROM messages' . $whereClause . ' ORDER BY created_at DESC',
+    $parameters
+)->fetchAll();
 
-$summary = $pdo->query(
-    "SELECT COUNT(*) AS total, "
-    . "SUM(status = 'unread') AS unread, "
-    . "SUM(status = 'read') AS `read` FROM messages"
+$summary = db_query(
+    "SELECT COUNT(*) AS total, SUM(status = 'unread') AS unread, SUM(status = 'read') AS `read` FROM messages"
 )->fetch();
 
-require __DIR__ . '/includes/header.php';
+require APP_PATH . '/views/admin/header.php';
 ?>
 
 <div class="admin-page-header mb-4">
@@ -54,7 +47,7 @@ require __DIR__ . '/includes/header.php';
         <div class="section-kicker">Insights</div>
         <h1 class="h2 fw-bold">Contact reports</h1>
     </div>
-    <button class="btn btn-outline-dark" type="button" onclick="window.print()">
+    <button class="btn btn-outline-dark" type="button" data-print>
         <i class="bi bi-printer" aria-hidden="true"></i>
         Print report
     </button>
@@ -139,4 +132,4 @@ require __DIR__ . '/includes/header.php';
     </div>
 </section>
 
-<?php require __DIR__ . '/includes/footer.php'; ?>
+<?php require APP_PATH . '/views/admin/footer.php'; ?>

@@ -1,115 +1,74 @@
 <?php
-require_once __DIR__ . '/config/database.php';
-require_once __DIR__ . '/includes/functions.php';
-require_once __DIR__ . '/vendor/autoload.php';
+require __DIR__ . '/app/bootstrap.php';
+require APP_PATH . '/lib/mailer.php';
 
-use PHPMailer\PHPMailer\Exception;
-use PHPMailer\PHPMailer\PHPMailer;
+const CONTACT_LIMIT = 5;
+const CONTACT_WINDOW = 3600;
 
 $pageTitle = 'Contact | Alexandra Concepcion';
 $activePage = 'contact';
+$site = config('site');
 $errors = [];
-$formData = [
-    'name' => '',
-    'email' => '',
-    'subject' => '',
-    'message' => '',
-];
+$sent = false;
+$limits = ['name' => 100, 'email' => 160, 'subject' => 180, 'message' => 5000];
+$formData = array_fill_keys(array_keys($limits), '');
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $formData = [
-        'name' => trim($_POST['name'] ?? ''),
-        'email' => trim($_POST['email'] ?? ''),
-        'subject' => trim($_POST['subject'] ?? ''),
-        'message' => trim($_POST['message'] ?? ''),
-    ];
-
-    if (!hash_equals($_SESSION['csrf'] ?? '', $_POST['csrf'] ?? '')) {
-        $errors[] = 'Security token expired. Please try again.';
+if (is_post()) {
+    foreach ($limits as $field => $max) {
+        $formData[$field] = input($field, $max + 1);
     }
 
-    if ($formData['name'] === '' || strlen($formData['name']) > 100) {
-        $errors[] = 'Please enter your name.';
+    if (!csrf_is_valid()) {
+        $errors[] = 'Your session expired. Please send the form again.';
+    } elseif (input('website') !== '') {
+        // Hidden honeypot field: only bots fill it. Pretend success.
+        $sent = true;
+    } elseif (rate_limited('contact', CONTACT_LIMIT, CONTACT_WINDOW)) {
+        $errors[] = 'You have sent several messages recently. Please try again later or email me directly.';
+    } else {
+        if ($formData['name'] === '' || mb_strlen($formData['name']) > $limits['name']) {
+            $errors[] = 'Please enter your name (up to 100 characters).';
+        }
+        if (!filter_var($formData['email'], FILTER_VALIDATE_EMAIL) || mb_strlen($formData['email']) > $limits['email']) {
+            $errors[] = 'Please enter a valid email address.';
+        }
+        if ($formData['subject'] === '' || mb_strlen($formData['subject']) > $limits['subject']) {
+            $errors[] = 'Please enter a subject (up to 180 characters).';
+        }
+        if ($formData['message'] === '' || mb_strlen($formData['message']) > $limits['message']) {
+            $errors[] = 'Please enter a message (up to 5,000 characters).';
+        }
     }
 
-    if (!filter_var($formData['email'], FILTER_VALIDATE_EMAIL)) {
-        $errors[] = 'Please enter a valid email.';
-    }
-
-    if ($formData['subject'] === '' || strlen($formData['subject']) > 180) {
-        $errors[] = 'Please enter a subject.';
-    }
-
-    if ($formData['message'] === '' || strlen($formData['message']) > 5000) {
-        $errors[] = 'Please enter a message.';
-    }
-
-    if (!$errors) {
-        $stmt = $pdo->prepare(
-            'INSERT INTO messages (name, email, subject, message, status) VALUES (?, ?, ?, ?, ?)'
+    if (!$errors && !$sent) {
+        record_attempt('contact', CONTACT_WINDOW);
+        db_query(
+            "INSERT INTO messages (name, email, subject, message, status) VALUES (?, ?, ?, ?, 'unread')",
+            array_values($formData)
         );
-        $stmt->execute([
-            $formData['name'],
-            $formData['email'],
-            $formData['subject'],
-            $formData['message'],
-            'unread',
-        ]);
 
-        $recipient = getenv('PORTFOLIO_CONTACT_EMAIL')
-            ?: 'lykemaeconcepcion@gmail.com';
-        $smtpUser = getenv('PORTFOLIO_SMTP_USER')
-            ?: 'lykemaeconcepcion@gmail.com';
-        $smtpPassword = getenv('PORTFOLIO_SMTP_APP_PASSWORD');
-        $emailSent = false;
-        $emailError = null;
-
-        if (!$smtpPassword) {
-            $emailError = 'Gmail App Password is not configured for Apache.';
-        } else {
-            try {
-                $mailer = new PHPMailer(true);
-                $mailer->isSMTP();
-                $mailer->Host = 'smtp.gmail.com';
-                $mailer->SMTPOptions = [
-                    'ssl' => [
-                        'peer_name' => 'smtp.gmail.com',
-                        'verify_peer' => true,
-                        'verify_peer_name' => true,
-                    ],
-                ];
-                $mailer->SMTPAuth = true;
-                $mailer->Username = $smtpUser;
-                $mailer->Password = $smtpPassword;
-                $mailer->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-                $mailer->Port = 587;
-                $mailer->CharSet = 'UTF-8';
-                $mailer->setFrom($smtpUser, 'Portfolio contact form');
-                $mailer->addAddress($recipient);
-                $mailer->addReplyTo($formData['email'], $formData['name']);
-                $mailer->Subject = '[Portfolio] ' . $formData['subject'];
-                $mailer->Body = "Name: {$formData['name']}\n"
-                    . "Email: {$formData['email']}\n\n"
-                    . $formData['message'];
-                $emailSent = $mailer->send();
-            } catch (Exception $exception) {
-                $emailSent = false;
-                $emailError = 'Gmail rejected the SMTP connection. Check the App Password.';
-                error_log('Portfolio mail error: ' . $exception->getMessage());
-            }
+        // The message is already saved for the admin inbox; email is a bonus notification.
+        try {
+            send_mail(
+                config('mail.contact_to') ?: $site['email'],
+                '[Portfolio] ' . $formData['subject'],
+                "Name: {$formData['name']}\nEmail: {$formData['email']}\n\n{$formData['message']}",
+                'Portfolio contact form',
+                [$formData['email'], $formData['name']]
+            );
+        } catch (RuntimeException) {
+            // Logged inside send_mail(); visitors never see server configuration details.
         }
 
-        $sent = $emailSent;
-        $formData = [
-            'name' => '',
-            'email' => '',
-            'subject' => '',
-            'message' => '',
-        ];
+        $sent = true;
+    }
+
+    if ($sent) {
+        $formData = array_fill_keys(array_keys($limits), '');
     }
 }
 
-require __DIR__ . '/includes/header.php';
+require APP_PATH . '/views/site/header.php';
 ?>
 
 <section class="page-banner">
@@ -138,25 +97,17 @@ require __DIR__ . '/includes/header.php';
                 </p>
 
                 <div class="contact-links mt-4">
-                    <a href="mailto:lykemaeconcepcion@gmail.com">
+                    <a href="mailto:<?= e($site['email']) ?>">
                         <i class="bi bi-envelope" aria-hidden="true"></i>
-                        <span>lykemaeconcepcion@gmail.com</span>
+                        <span><?= e($site['email']) ?></span>
                     </a>
-                    <a
-                        href="https://www.linkedin.com/in/alexandra-concepcion"
-                        target="_blank"
-                        rel="noopener"
-                    >
+                    <a href="<?= e($site['linkedin']) ?>" target="_blank" rel="noopener">
                         <i class="bi bi-linkedin" aria-hidden="true"></i>
-                        <span>linkedin.com/in/alexandra-concepcion</span>
+                        <span><?= e(preg_replace('#^https?://(www\.)?#', '', $site['linkedin'])) ?></span>
                     </a>
-                    <a
-                        href="https://github.com/alexandra-0805"
-                        target="_blank"
-                        rel="noopener"
-                    >
+                    <a href="<?= e($site['github']) ?>" target="_blank" rel="noopener">
                         <i class="bi bi-github" aria-hidden="true"></i>
-                        <span>github.com/alexandra-0805</span>
+                        <span><?= e(preg_replace('#^https?://(www\.)?#', '', $site['github'])) ?></span>
                     </a>
                 </div>
             </div>
@@ -169,32 +120,14 @@ require __DIR__ . '/includes/header.php';
                         Share a few details and I will follow up with the next steps.
                     </p>
 
-                    <?php if (!empty($sent)): ?>
-                        <div class="alert alert-success" role="status">
-                            Thank you! Your message has been sent successfully.
-                        </div>
-                    <?php endif; ?>
-
-                    <?php if (!empty($emailError)): ?>
-                        <div class="alert alert-warning" role="status">
-                            Your message was saved, but <?= e($emailError) ?>
-                        </div>
-                    <?php endif; ?>
-
-                    <?php if ($errors): ?>
-                        <div class="alert alert-danger" role="alert">
-                            <?php foreach ($errors as $error): ?>
-                                <div><?= e($error) ?></div>
-                            <?php endforeach; ?>
-                        </div>
-                    <?php endif; ?>
+                    <?= render_alerts($errors, $sent ? "Thank you! Your message has been sent. I'll get back to you within one business day." : '') ?>
 
                     <form method="post" data-validate novalidate>
-                        <input
-                            type="hidden"
-                            name="csrf"
-                            value="<?= e(csrf_token()) ?>"
-                        >
+                        <?= csrf_field() ?>
+                        <div class="visually-hidden" aria-hidden="true">
+                            <label for="website">Leave this field empty</label>
+                            <input id="website" name="website" tabindex="-1" autocomplete="off">
+                        </div>
 
                         <div class="row g-3">
                             <div class="col-md-6">
@@ -262,4 +195,4 @@ require __DIR__ . '/includes/header.php';
     </div>
 </section>
 
-<?php require __DIR__ . '/includes/footer.php'; ?>
+<?php require APP_PATH . '/views/site/footer.php'; ?>
