@@ -1,6 +1,6 @@
 <?php
 require __DIR__ . '/app/bootstrap.php';
-require APP_PATH . '/lib/mailer.php';
+require APP_PATH . '/lib/notify.php';
 
 const CONTACT_LIMIT = 5;
 const CONTACT_WINDOW = 3600;
@@ -47,18 +47,20 @@ if (is_post()) {
             array_values($formData)
         );
 
-        // The message is already saved for the admin inbox; email is a bonus notification.
-        try {
-            send_mail(
-                config('mail.contact_to') ?: $site['email'],
-                '[Portfolio] ' . $formData['subject'],
-                "Name: {$formData['name']}\nEmail: {$formData['email']}\n\n{$formData['message']}",
-                'Portfolio contact form',
-                [$formData['email'], $formData['name']]
-            );
-        } catch (RuntimeException) {
-            // Logged inside send_mail(); visitors never see server configuration details.
-        }
+        // The message is already saved for the admin inbox; the Gmail alert is a bonus.
+        // Failures are logged inside send_mail(); visitors never see server details.
+        notify_owner(
+            'messages',
+            'New message: ' . $formData['subject'],
+            "You received a new message through your contact form.\n\n"
+            . "Name:     {$formData['name']}\n"
+            . "Email:    {$formData['email']}\n"
+            . "Subject:  {$formData['subject']}\n\n"
+            . "{$formData['message']}\n\n"
+            . "Reply to this email to answer {$formData['name']} directly.\n"
+            . 'Admin inbox: ' . site_link('admin/messages.php'),
+            [$formData['email'], $formData['name']]
+        );
 
         $sent = true;
     }
@@ -97,17 +99,25 @@ require APP_PATH . '/views/site/header.php';
                 </p>
 
                 <div class="contact-links mt-4">
-                    <a href="mailto:<?= e($site['email']) ?>">
+                    <a href="mailto:<?= e($site['email']) ?>" data-reach="email">
                         <i class="bi bi-envelope" aria-hidden="true"></i>
                         <span><?= e($site['email']) ?></span>
                     </a>
-                    <a href="<?= e($site['linkedin']) ?>" target="_blank" rel="noopener">
+                    <a href="<?= e($site['linkedin']) ?>" target="_blank" rel="noopener" data-reach="linkedin">
                         <i class="bi bi-linkedin" aria-hidden="true"></i>
                         <span><?= e(preg_replace('#^https?://(www\.)?#', '', $site['linkedin'])) ?></span>
                     </a>
-                    <a href="<?= e($site['github']) ?>" target="_blank" rel="noopener">
+                    <a href="<?= e($site['github']) ?>" target="_blank" rel="noopener" data-reach="github">
                         <i class="bi bi-github" aria-hidden="true"></i>
                         <span><?= e(preg_replace('#^https?://(www\.)?#', '', $site['github'])) ?></span>
+                    </a>
+                    <a href="<?= e($site['upwork']) ?>" target="_blank" rel="noopener" data-reach="upwork">
+                        <i class="bi bi-briefcase" aria-hidden="true"></i>
+                        <span>Hire me on Upwork</span>
+                    </a>
+                    <a href="<?= e($site['quora']) ?>" target="_blank" rel="noopener" data-reach="quora">
+                        <i class="bi bi-quora" aria-hidden="true"></i>
+                        <span><?= e(preg_replace('#^https?://(www\.)?#', '', $site['quora'])) ?></span>
                     </a>
                 </div>
             </div>

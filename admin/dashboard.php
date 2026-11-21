@@ -1,5 +1,6 @@
 <?php
 require __DIR__ . '/../app/bootstrap.php';
+require APP_PATH . '/lib/activity.php';
 require_admin();
 
 $adminTitle = 'Dashboard';
@@ -10,9 +11,13 @@ foreach (['projects', 'skills', 'services', 'messages', 'certificates'] as $tabl
 }
 
 $unreadMessages = (int) db_query("SELECT COUNT(*) FROM messages WHERE status = 'unread'")->fetchColumn();
+$feedbackSummary = get_feedback_summary();
+$counts['feedback'] = $feedbackSummary['total'];
+$counts['visitors'] = count_unique_visitors(29);
+$visitorsToday = count_unique_visitors();
 
 $analytics = [
-    'total_content' => array_sum($counts) - $counts['messages'],
+    'total_content' => $counts['projects'] + $counts['skills'] + $counts['services'] + $counts['certificates'],
     'average_skill' => (float) db_query('SELECT COALESCE(AVG(proficiency), 0) FROM skills')->fetchColumn(),
     'read_messages' => $counts['messages'] - $unreadMessages,
 ];
@@ -55,6 +60,8 @@ $dashboardCards = [
     ['key' => 'skills', 'label' => 'Skills', 'icon' => 'bi-bar-chart', 'url' => 'skills.php'],
     ['key' => 'services', 'label' => 'Services', 'icon' => 'bi-stars', 'url' => 'services.php'],
     ['key' => 'messages', 'label' => 'Messages', 'icon' => 'bi-envelope', 'url' => 'messages.php'],
+    ['key' => 'feedback', 'label' => 'Reviews', 'icon' => 'bi-star', 'url' => 'feedback.php'],
+    ['key' => 'visitors', 'label' => 'Visitors (30 days)', 'icon' => 'bi-people', 'url' => 'visitors.php'],
     ['key' => 'reports', 'label' => 'Reports', 'icon' => 'bi-bar-chart-line', 'url' => 'reports.php', 'value' => 'View'],
     ['key' => 'certificates', 'label' => 'Certificates', 'icon' => 'bi-award', 'url' => 'certificates.php'],
     ['key' => 'resume', 'label' => 'Resume', 'icon' => 'bi-file-earmark-person', 'url' => 'resume.php', 'value' => 'PDF'],
@@ -108,6 +115,10 @@ require APP_PATH . '/views/admin/header.php';
                         <?= e($card['label']) ?>
                         <?php if ($card['key'] === 'messages' && $unreadMessages): ?>
                             <span class="dashboard-stat-meta"><?= $unreadMessages ?> unread</span>
+                        <?php elseif ($card['key'] === 'feedback' && $feedbackSummary['total']): ?>
+                            <span class="dashboard-stat-meta">★ <?= e(format_rating($feedbackSummary['average'])) ?> avg</span>
+                        <?php elseif ($card['key'] === 'visitors' && $visitorsToday): ?>
+                            <span class="dashboard-stat-meta"><?= $visitorsToday ?> today</span>
                         <?php endif; ?>
                     </div>
                 </div>

@@ -32,6 +32,24 @@ return [
         'contact_to' => '',
     ],
 
+    // Automatic Gmail alerts. Sent with the mail.* SMTP account above.
+    'notify' => [
+        // Inbox for alerts (falls back to mail.contact_to, then site.email).
+        'to' => '',
+        'visitors' => true,  // a visitor's first page view of the day
+        'reach' => true,     // a visitor clicks your email / LinkedIn / GitHub / Upwork / Quora link
+        'messages' => true,  // a contact form message
+        'feedback' => true,  // new feedback with a star rating
+        // Max visitor + reach alerts per day, to stay under Gmail's sending limit. 0 = no limit.
+        'activity_daily_cap' => 50,
+        'timezone' => 'Asia/Manila',
+    ],
+
+    'feedback' => [
+        // true: new feedback shows on the site right away. false: it waits until you publish it in the admin panel.
+        'auto_publish' => true,
+    ],
+
     'admin' => [
         // Public admin registration stays closed unless enabled in the private file.
         'signup_enabled' => false,
@@ -46,6 +64,8 @@ return [
         'location' => 'Cavite, Philippines',
         'linkedin' => 'https://www.linkedin.com/in/alexandra-concepcion',
         'github' => 'https://github.com/alexandra-0805',
+        'upwork' => 'https://www.upwork.com/freelancers/~01bcf2086aeec075ba',
+        'quora' => 'https://www.quora.com/profile/Alexandra-Concepcion-9',
         'resume_pdf' => 'assets/docs/Alexandra_Concepcion_VA.pdf',
     ],
 ];

@@ -21,7 +21,7 @@ $pageDescription ??= 'Alexandra Concepcion is a Virtual Assistant in Cavite, Phi
     <?php endif; ?>
     <meta name="theme-color" content="#fffdf8">
     <link rel="icon" href="<?= e(asset('assets/images/favicon.svg')) ?>" type="image/svg+xml">
-    <script>document.documentElement.classList.add('js');</script>
+    <script>document.documentElement.classList.add('js', 'PageRevealEvent' in window ? 'vt' : 'no-vt');</script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
@@ -30,4 +30,5 @@ $pageDescription ??= 'Alexandra Concepcion is a Virtual Assistant in Cavite, Phi
     <?php foreach ($extraStyles ?? [] as $stylesheet): ?>
         <link rel="stylesheet" href="<?= e(asset($stylesheet)) ?>">
     <?php endforeach; ?>
+    <link rel="stylesheet" href="<?= e(asset('assets/css/motion.css')) ?>">
 </head>

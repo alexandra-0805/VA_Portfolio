@@ -10,11 +10,16 @@ $navigationItems = [
     'services' => ['Services', 'services.php'],
     'projects' => ['Work', 'projects.php'],
     'resume' => ['Resume', 'resume.php'],
+    'feedback' => ['Feedback', 'feedback.php'],
 ];
 
 require APP_PATH . '/views/partials/head.php';
 ?>
+<?php if (is_admin()): ?>
 <body>
+<?php else: /* Visitor + "reach me" alerts: see assets/js/main.js and signal.php */ ?>
+<body data-signal-url="<?= e(url('signal.php')) ?>" data-signal-token="<?= e(csrf_token()) ?>">
+<?php endif; ?>
     <a class="skip-link" href="#main-content">Skip to content</a>
 
     <nav class="navbar navbar-expand-lg fixed-top site-nav" aria-label="Main navigation">

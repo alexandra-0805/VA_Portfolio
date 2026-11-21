@@ -6,6 +6,8 @@ $activePage = 'home';
 $services = get_services(6);
 $skills = get_skills(8);
 $projects = get_projects(3);
+$feedbackSummary = get_feedback_summary();
+$homeFeedback = get_feedback(4);
 
 $highlights = [
     ['icon' => 'bi-kanban', 'title' => 'Organized support', 'text' => 'Clear systems for busy workflows'],
@@ -75,22 +77,6 @@ require APP_PATH . '/views/site/header.php';
                             width="430"
                             height="430"
                             fetchpriority="high">
-                    </div>
-
-                    <div class="float-card float-card-top">
-                        <span class="float-card-icon"><i class="bi bi-clock-history" aria-hidden="true"></i></span>
-                        <span>
-                            <strong>Fast replies</strong>
-                            <small>Within one business day</small>
-                        </span>
-                    </div>
-
-                    <div class="float-card float-card-bottom">
-                        <span class="float-card-icon float-card-icon-accent"><i class="bi bi-geo-alt" aria-hidden="true"></i></span>
-                        <span>
-                            <strong>Cavite, Philippines</strong>
-                            <small>Remote · GMT+8</small>
-                        </span>
                     </div>
                 </div>
             </div>
@@ -349,6 +335,47 @@ require APP_PATH . '/views/site/header.php';
     </div>
 </section>
 
+<!-- Feedback -->
+<section class="section-alt">
+    <div class="container">
+        <div class="section-heading-row mb-5">
+            <div>
+                <div class="section-kicker mb-2">Feedback</div>
+                <h2 class="section-title">What people <span>are saying.</span></h2>
+            </div>
+            <a href="feedback.php#leave-feedback" class="btn btn-ghost">
+                <i class="bi bi-star" aria-hidden="true"></i>
+                Leave feedback
+            </a>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-lg-4 animate">
+                <?php require APP_PATH . '/views/partials/rating_summary.php'; ?>
+            </div>
+            <div class="col-lg-8">
+                <?php if ($homeFeedback): ?>
+                    <div class="row g-4">
+                        <?php foreach ($homeFeedback as $index => $feedbackItem): ?>
+                            <div class="col-md-6 animate" style="--delay: <?= ($index % 2) * 80 ?>ms">
+                                <?php require APP_PATH . '/views/partials/feedback_card.php'; ?>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                    <a href="feedback.php" class="text-link mt-4">
+                        Read all feedback
+                        <i class="bi bi-arrow-right" aria-hidden="true"></i>
+                    </a>
+                <?php else: ?>
+                    <p class="empty-state h-100 mb-0">
+                        No reviews yet. <a href="feedback.php#leave-feedback">Be the first to leave feedback.</a>
+                    </p>
+                <?php endif; ?>
+            </div>
+        </div>
+    </div>
+</section>
+
 <!-- Call to action -->
 <section class="cta-section">
     <div class="container">
@@ -368,7 +395,7 @@ require APP_PATH . '/views/site/header.php';
                     Start a conversation
                     <i class="bi bi-arrow-up-right" aria-hidden="true"></i>
                 </a>
-                <a href="mailto:<?= e(config('site.email')) ?>" class="cta-email">
+                <a href="mailto:<?= e(config('site.email')) ?>" class="cta-email" data-reach="email">
                     <i class="bi bi-envelope" aria-hidden="true"></i>
                     <?= e(config('site.email')) ?>
                 </a>

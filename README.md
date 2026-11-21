@@ -42,8 +42,9 @@ E:\xampp_db\private\va_portfolio\     OUTSIDE the project and the web folder
    (one level above `htdocs`) and fill in the real values. Use a Gmail **App Password**
    (16 letters, no spaces) for `mail.password`, never your normal Gmail password.
 2. Import `database/schema.sql`, then `database/seed.sql` for sample content.
-   Upgrading an existing database? Back it up, then run
-   `database/migrations/2026_11_21_cleanup_and_security.sql`.
+   Upgrading an existing database? Back it up, then run the files in
+   `database/migrations/` in date order (`..._cleanup_and_security.sql`, then
+   `..._feedback_and_notifications.sql`).
 3. Create an admin account (you are prompted for the password):
    ```
    e:\xampp_db\php\php.exe scripts/create_admin.php <username> <email>
@@ -51,6 +52,25 @@ E:\xampp_db\private\va_portfolio\     OUTSIDE the project and the web folder
    Run the same command again to reset a password.
 4. `composer install` if `vendor/` is missing.
 5. Open `http://localhost/VA_Portfolio/`. The admin panel is at `/admin/`.
+
+## Feedback and Gmail alerts
+
+- **Feedback** (`feedback.php`, also on the home page): visitors leave a 1–5 star rating
+  and a comment. The average, review count, and star breakdown are calculated
+  automatically from published feedback. Manage it in **Admin → Feedback** (hide,
+  publish, delete). Set `feedback.auto_publish => false` to approve reviews first.
+- **Gmail alerts** are sent through the `mail.*` SMTP account to `notify.to`
+  (or `mail.contact_to`, then `site.email`):
+  - **Visitors**: a visitor's first page view of the day.
+  - **Reach me**: a visitor clicks your email, LinkedIn, GitHub, Upwork, or Quora link (once per link per day).
+  - **Messages**: every contact form message (reply directly from Gmail).
+  - **Feedback**: every new review, with its star rating.
+  Turn any of them off with `'notify' => ['visitors' => false, ...]` in the private
+  config. Visitor and reach alerts are capped at `notify.activity_daily_cap` per day
+  (default 50) to protect Gmail's sending limit.
+- Visits are recorded by `signal.php` from a small script in `assets/js/main.js`.
+  Your own browsing while signed in to the admin panel, and bots, are ignored.
+  Visitors are stored as a one-way hash, not as IP addresses. See **Admin → Visitors**.
 
 ## Security notes
 

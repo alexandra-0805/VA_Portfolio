@@ -13,6 +13,8 @@ $adminNavigation = [
     ['Skills', 'skills.php', 'bi-bar-chart'],
     ['Certificates', 'certificates.php', 'bi-award'],
     ['Messages', 'messages.php', 'bi-envelope'],
+    ['Feedback', 'feedback.php', 'bi-star'],
+    ['Visitors', 'visitors.php', 'bi-people'],
     ['Reports', 'reports.php', 'bi-bar-chart-line'],
     ['Resume', 'resume.php', 'bi-file-earmark-person'],
 ];

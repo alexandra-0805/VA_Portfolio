@@ -56,6 +56,34 @@ document.addEventListener('DOMContentLoaded', () => {
 	});
 	document.querySelectorAll('[data-print]').forEach((button) => button.addEventListener('click', () => window.print()));
 
+	// Visitor + "reach me" signals for the owner's Gmail alerts (public pages only, see signal.php).
+	const { signalUrl, signalToken } = document.body.dataset;
+	const sendSignal = (fields) => {
+		if (!signalUrl || !signalToken) {
+			return;
+		}
+		const data = new FormData();
+		data.append('csrf', signalToken);
+		Object.entries(fields).forEach(([key, value]) => data.append(key, value));
+		if (!(navigator.sendBeacon && navigator.sendBeacon(signalUrl, data))) {
+			fetch(signalUrl, { method: 'POST', body: data, keepalive: true, credentials: 'same-origin' }).catch(() => {});
+		}
+	};
+	sendSignal({ type: 'visit', page: location.pathname, title: document.title, referrer: document.referrer });
+	document.querySelectorAll('[data-reach]').forEach((link) => {
+		link.addEventListener('click', () => sendSignal({ type: 'reach', channel: link.dataset.reach, page: location.pathname, title: document.title }));
+	});
+
+	// Star rating picker (Feedback page): show the chosen rating's label.
+	document.querySelectorAll('[data-rating-input]').forEach((group) => {
+		const text = group.parentElement.querySelector('[data-rating-text]');
+		group.addEventListener('change', (event) => {
+			if (text && event.target.dataset.label) {
+				text.textContent = event.target.dataset.label;
+			}
+		});
+	});
+
 	// Certificate preview dialog (About page).
 	const viewer = document.getElementById('certificateViewer');
 	const viewerImage = document.getElementById('certificateViewerImage');

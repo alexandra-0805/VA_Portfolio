@@ -1,0 +1,557 @@
+/**
+ * Motion layer: page transitions, cursor highlight, text and icon animations.
+ * Loaded after the other stylesheets on every page; driven by assets/js/motion.js.
+ *
+ * Everything here is skipped for visitors who ask their device for reduced motion,
+ * and the cursor effects only run on devices with a real mouse (desktop / laptop).
+ */
+
+:root {
+    --fx-ease: cubic-bezier(.2, .7, .2, 1);
+    --fx-spring: cubic-bezier(.34, 1.56, .64, 1);
+    --fx-rise: 26px;
+    --marker: rgba(216, 101, 67, .2);
+}
+
+@media (max-width: 767px) {
+    :root {
+        --fx-rise: 16px;
+    }
+}
+
+/* Highlighted words in headings ------------------------------------------ */
+
+.section-title > span:not(.word),
+.display-title em {
+    padding: 0 .08em;
+    margin: 0 -.08em;
+    background-image: linear-gradient(100deg, var(--marker), rgba(224, 165, 38, .22));
+    background-repeat: no-repeat;
+    background-position: 0 88%;
+    background-size: 100% .32em;
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
+}
+
+.cta-card .section-title > span:not(.word) {
+    --marker: rgba(155, 202, 192, .22);
+}
+
+/* Words created by motion.js must keep their heading's original look. */
+.words-split .word {
+    display: inline-block;
+    color: inherit;
+    font-family: inherit;
+    font-style: inherit;
+    font-weight: inherit;
+    letter-spacing: inherit;
+}
+
+/* Scroll progress bar ----------------------------------------------------- */
+
+.scroll-progress {
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 0;
+    z-index: 1035;
+    height: 3px;
+    pointer-events: none;
+    background: linear-gradient(90deg, var(--teal), var(--accent), var(--star));
+    transform: scaleX(0);
+    transform-origin: left;
+}
+
+/* Text links: underline that draws itself --------------------------------- */
+
+.text-link {
+    background: linear-gradient(currentColor, currentColor) 0 100% / 0 1.5px no-repeat;
+    border-bottom: 0;
+    transition: color .2s ease, background-size .35s var(--fx-ease);
+}
+
+.text-link:hover {
+    background-size: 100% 1.5px;
+    border-bottom-color: transparent;
+}
+
+/* Buttons: press ripple (all devices) ------------------------------------- */
+
+.btn {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+}
+
+.fx-ripple {
+    position: absolute;
+    z-index: -1;
+    width: var(--size);
+    height: var(--size);
+    margin: calc(var(--size) / -2) 0 0 calc(var(--size) / -2);
+    pointer-events: none;
+    background: currentColor;
+    border-radius: 50%;
+    opacity: .22;
+    transform: scale(0);
+    animation: fx-ripple .6s ease-out forwards;
+}
+
+@keyframes fx-ripple {
+    to {
+        opacity: 0;
+        transform: scale(1);
+    }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    /* Page transitions ---------------------------------------------------- */
+
+    /* Browsers with cross-page View Transitions (Chrome, Edge, Safari). */
+    @view-transition {
+        navigation: auto;
+    }
+
+    ::view-transition-old(root) {
+        animation: fx-page-out .28s cubic-bezier(.4, 0, 1, 1) both;
+    }
+
+    ::view-transition-new(root) {
+        animation: fx-page-in .5s var(--fx-ease) both;
+    }
+
+    /* The top bars stay in place while the page content changes underneath. */
+    .site-nav {
+        view-transition-name: site-nav;
+    }
+
+    .admin-nav-bar {
+        view-transition-name: admin-nav;
+    }
+
+    .portfolio-chatbot-launcher {
+        view-transition-name: chatbot-launcher;
+    }
+
+    /* Other browsers (Firefox): fade handled by motion.js + these rules. */
+    .no-vt body > main,
+    .no-vt .site-footer {
+        animation: fx-fade-in .5s ease backwards;
+    }
+
+    .page-leaving body > main,
+    .page-leaving .site-footer {
+        opacity: 0;
+        transition: opacity .22s ease;
+    }
+
+    @keyframes fx-page-out {
+        to {
+            opacity: 0;
+            transform: translateY(-14px) scale(.99);
+        }
+    }
+
+    @keyframes fx-page-in {
+        from {
+            opacity: 0;
+            transform: translateY(22px);
+        }
+    }
+
+    @keyframes fx-fade-in {
+        from {
+            opacity: 0;
+        }
+    }
+
+    /* Main heading: words rise in one after another ------------------------ */
+
+    .words-split .word {
+        animation: fx-word .8s var(--fx-ease) backwards;
+        animation-delay: calc(var(--i, 0) * 65ms + 120ms);
+    }
+
+    @keyframes fx-word {
+        from {
+            opacity: 0;
+            transform: translateY(.55em) rotate(3deg);
+            filter: blur(6px);
+        }
+    }
+
+    /* Highlight marker sweeps under the italic words. */
+    .fx-mark {
+        animation: fx-marker 1s var(--fx-ease) backwards;
+        animation-delay: var(--mark-delay, 350ms);
+    }
+
+    @keyframes fx-marker {
+        from {
+            background-size: 0 .32em;
+        }
+    }
+
+    /* Scroll reveal -------------------------------------------------------- */
+
+    .fx-wait {
+        opacity: 0;
+    }
+
+    .fx-in {
+        animation: fx-rise .85s var(--fx-ease) backwards;
+        animation-delay: var(--fx-delay, 0ms);
+    }
+
+    .section-kicker.fx-in {
+        animation-name: fx-kicker;
+    }
+
+    .fx-icon.fx-in {
+        animation: fx-pop .75s var(--fx-spring) backwards;
+        animation-delay: calc(var(--fx-delay, 0ms) + 220ms);
+    }
+
+    @keyframes fx-rise {
+        from {
+            opacity: 0;
+            transform: translateY(var(--fx-rise)) scale(.985);
+        }
+    }
+
+    @keyframes fx-kicker {
+        from {
+            opacity: 0;
+            letter-spacing: .34em;
+        }
+    }
+
+    @keyframes fx-pop {
+        0% {
+            opacity: 0;
+            transform: scale(.35) rotate(-16deg);
+        }
+
+        60% {
+            opacity: 1;
+            transform: scale(1.12) rotate(5deg);
+        }
+    }
+
+    /* Rating stars light up one by one. */
+    .fx-stars:not(.fx-in) i {
+        opacity: 0;
+    }
+
+    .fx-stars.fx-in i {
+        display: inline-block;
+        animation: fx-star .55s var(--fx-spring) backwards;
+        animation-delay: calc(var(--fx-delay, 0ms) + var(--i, 0) * 80ms + 150ms);
+    }
+
+    @keyframes fx-star {
+        from {
+            opacity: 0;
+            transform: scale(0) rotate(-45deg);
+        }
+    }
+
+    /* Icon hover animations ------------------------------------------------ */
+
+    .service-card:hover .service-icon i,
+    .feature-panel:hover > i,
+    .trust-grid li:hover i,
+    .process-step:hover .process-icon i,
+    .resume-entry:hover .resume-entry-icon,
+    .dashboard-stat-link:hover .dashboard-stat-icon,
+    .admin-nav-link:hover i,
+    .certificate-card:hover .bi-award {
+        display: inline-block;
+        animation: fx-wiggle .65s ease;
+    }
+
+    .contact-links a:hover i,
+    .site-footer li a:hover i {
+        display: inline-grid;
+        animation: fx-bounce .6s var(--fx-spring);
+    }
+
+    .social-links a:hover {
+        transform: translateY(-4px) rotate(-6deg);
+        background: var(--accent);
+    }
+
+    .social-links a:hover i {
+        display: inline-block;
+        animation: fx-pop .55s var(--fx-spring);
+    }
+
+    .btn .bi-send,
+    .btn .bi-download,
+    .btn .bi-star,
+    .btn .bi-printer,
+    .btn .bi-box-arrow-up-right,
+    .back-top i,
+    .project-back-link i {
+        display: inline-block;
+        transition: transform .3s var(--fx-spring);
+    }
+
+    .btn:hover .bi-send {
+        transform: translate(4px, -4px) rotate(-8deg);
+    }
+
+    .btn:hover .bi-download {
+        animation: fx-drop .8s ease infinite;
+    }
+
+    .btn:hover .bi-star {
+        transform: rotate(72deg) scale(1.15);
+    }
+
+    .btn:hover .bi-printer,
+    .btn:hover .bi-box-arrow-up-right {
+        transform: translate(2px, -2px);
+    }
+
+    .back-top:hover i {
+        animation: fx-up .8s ease infinite;
+    }
+
+    .project-back-link:hover i {
+        transform: translateX(-4px);
+    }
+
+    .navbar-brand span,
+    .brand-mark span {
+        display: inline-block;
+        transition: transform .35s var(--fx-spring), color .2s ease;
+    }
+
+    .navbar-brand:hover span,
+    .brand-mark:hover span {
+        transform: translateY(-5px) scale(1.4);
+    }
+
+    .portfolio-chatbot-launcher:hover > i {
+        display: inline-block;
+        animation: fx-wiggle .65s ease;
+    }
+
+    @keyframes fx-wiggle {
+        0%,
+        100% {
+            transform: none;
+        }
+
+        25% {
+            transform: rotate(-12deg) scale(1.12);
+        }
+
+        50% {
+            transform: rotate(9deg) scale(1.12);
+        }
+
+        75% {
+            transform: rotate(-4deg) scale(1.05);
+        }
+    }
+
+    @keyframes fx-bounce {
+        0%,
+        100% {
+            transform: none;
+        }
+
+        40% {
+            transform: translateY(-5px) scale(1.15);
+        }
+    }
+
+    @keyframes fx-drop {
+        0%,
+        100% {
+            transform: none;
+        }
+
+        50% {
+            transform: translateY(3px);
+        }
+    }
+
+    @keyframes fx-up {
+        0%,
+        100% {
+            transform: none;
+        }
+
+        50% {
+            transform: translateY(-3px);
+        }
+    }
+
+    /* Buttons: light sweep on hover */
+    .btn-primary::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        z-index: -1;
+        pointer-events: none;
+        background: linear-gradient(110deg, transparent 30%, rgba(255, 255, 255, .32) 50%, transparent 70%);
+        transform: translateX(-120%);
+    }
+
+    .btn-primary:hover::after {
+        transform: translateX(120%);
+        transition: transform .75s ease;
+    }
+
+    /* Gentle idle motion in the hero */
+    .hero-portrait-frame .portrait-placeholder {
+        animation: fx-float 7s ease-in-out infinite;
+    }
+
+    .hero-glow,
+    .hero-portrait-frame {
+        transition: transform .6s var(--fx-ease);
+    }
+
+    .cursor-fx .hero-glow {
+        transform: translate(calc(var(--px, 0) * 26px), calc(var(--py, 0) * 26px));
+    }
+
+    .cursor-fx .hero-portrait-frame {
+        transform: translate(calc(var(--px, 0) * -10px), calc(var(--py, 0) * -10px));
+    }
+
+    @keyframes fx-float {
+        0%,
+        100% {
+            transform: none;
+        }
+
+        50% {
+            transform: translateY(-10px);
+        }
+    }
+
+    /* Touch screens: cards and buttons respond to a tap. */
+    @media (hover: none) {
+        .service-card:active,
+        .project-card:active,
+        .feedback-card:active,
+        .certificate-card:active,
+        .skill-card:active,
+        .process-step:active,
+        .btn:active {
+            transform: scale(.97);
+            transition: transform .12s ease;
+        }
+    }
+
+    /* Cursor highlight (mouse devices only, see motion.js) ----------------- */
+
+    .cursor-ring,
+    .cursor-glow {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 0;
+        height: 0;
+        pointer-events: none;
+        opacity: 0;
+        transition: opacity .3s ease;
+        will-change: transform;
+    }
+
+    .cursor-ring {
+        z-index: 2147483000;
+    }
+
+    .cursor-glow {
+        z-index: 2147482999;
+        mix-blend-mode: multiply;
+    }
+
+    .cursor-visible .cursor-ring,
+    .cursor-visible .cursor-glow {
+        opacity: 1;
+    }
+
+    .cursor-ring::before {
+        content: '';
+        position: absolute;
+        top: -18px;
+        left: -18px;
+        width: 36px;
+        height: 36px;
+        border: 1.5px solid rgba(216, 101, 67, .75);
+        border-radius: 50%;
+        transition: transform .3s var(--fx-spring), background-color .25s ease, border-color .25s ease, opacity .25s ease;
+    }
+
+    .cursor-glow::before {
+        content: '';
+        position: absolute;
+        top: -190px;
+        left: -190px;
+        width: 380px;
+        height: 380px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(216, 101, 67, .13), rgba(28, 107, 104, .07) 40%, transparent 70%);
+    }
+
+    .cursor-hover .cursor-ring::before {
+        background: rgba(216, 101, 67, .12);
+        border-color: var(--accent);
+        transform: scale(1.65);
+    }
+
+    .cursor-down .cursor-ring::before {
+        transform: scale(.75);
+    }
+
+    .cursor-hover.cursor-down .cursor-ring::before {
+        transform: scale(1.35);
+    }
+
+    .cursor-text .cursor-ring::before {
+        opacity: 0;
+        transform: scale(.4);
+    }
+
+    /* Spotlight that follows the mouse inside cards. */
+    .fx-spot {
+        position: relative;
+    }
+
+    .fx-spot-glow {
+        position: absolute;
+        inset: 0;
+        z-index: 1;
+        pointer-events: none;
+        border-radius: inherit;
+        background: radial-gradient(340px circle at var(--mx, 50%) var(--my, 50%), rgba(216, 101, 67, .11), rgba(28, 107, 104, .05) 40%, transparent 65%);
+        mix-blend-mode: multiply;
+        opacity: 0;
+        transition: opacity .35s ease;
+    }
+
+    .fx-spot:hover > .fx-spot-glow {
+        opacity: 1;
+    }
+}
+
+@media print {
+    .scroll-progress,
+    .cursor-ring,
+    .cursor-glow,
+    .fx-spot-glow {
+        display: none !important;
+    }
+
+    .fx-wait,
+    .fx-stars i {
+        opacity: 1 !important;
+    }
+}

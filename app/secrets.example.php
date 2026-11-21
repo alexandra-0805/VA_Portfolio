@@ -25,6 +25,15 @@ return [
         'password' => 'abcdefghijklmnop', // Gmail App Password: 16 letters, no spaces
         'contact_to' => 'you@gmail.com',
     ],
+    // Optional: change which alerts reach your Gmail (all are on by default).
+    // 'notify' => [
+    //     'to' => 'you@gmail.com',
+    //     'visitors' => true,
+    //     'reach' => true,
+    //     'messages' => true,
+    //     'feedback' => true,
+    //     'activity_daily_cap' => 50,
+    // ],
     'admin' => [
         'signup_enabled' => false, // enable only briefly to add an admin
         'idle_timeout_minutes' => 120,

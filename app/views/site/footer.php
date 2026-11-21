@@ -13,9 +13,11 @@ $site = config('site');
                     <a class="brand-mark" href="<?= e(url('index.php')) ?>">Alexandra<span>.</span></a>
                     <p>Reliable virtual support for thoughtful businesses and ambitious digital projects.</p>
                     <div class="social-links">
-                        <a href="mailto:<?= e($site['email']) ?>" aria-label="Email Alexandra"><i class="bi bi-envelope" aria-hidden="true"></i></a>
-                        <a href="<?= e($site['linkedin']) ?>" target="_blank" rel="noopener" aria-label="LinkedIn (opens in a new tab)"><i class="bi bi-linkedin" aria-hidden="true"></i></a>
-                        <a href="<?= e($site['github']) ?>" target="_blank" rel="noopener" aria-label="GitHub (opens in a new tab)"><i class="bi bi-github" aria-hidden="true"></i></a>
+                        <a href="mailto:<?= e($site['email']) ?>" aria-label="Email Alexandra" data-reach="email"><i class="bi bi-envelope" aria-hidden="true"></i></a>
+                        <a href="<?= e($site['linkedin']) ?>" target="_blank" rel="noopener" aria-label="LinkedIn (opens in a new tab)" data-reach="linkedin"><i class="bi bi-linkedin" aria-hidden="true"></i></a>
+                        <a href="<?= e($site['github']) ?>" target="_blank" rel="noopener" aria-label="GitHub (opens in a new tab)" data-reach="github"><i class="bi bi-github" aria-hidden="true"></i></a>
+                        <a href="<?= e($site['upwork']) ?>" target="_blank" rel="noopener" aria-label="Upwork (opens in a new tab)" data-reach="upwork"><i class="bi bi-briefcase" aria-hidden="true"></i></a>
+                        <a href="<?= e($site['quora']) ?>" target="_blank" rel="noopener" aria-label="Quora (opens in a new tab)" data-reach="quora"><i class="bi bi-quora" aria-hidden="true"></i></a>
                     </div>
                 </div>
 
@@ -26,13 +28,14 @@ $site = config('site');
                         <li><a href="<?= e(url('services.php')) ?>">Services</a></li>
                         <li><a href="<?= e(url('projects.php')) ?>">Work</a></li>
                         <li><a href="<?= e(url('resume.php')) ?>">Resume</a></li>
+                        <li><a href="<?= e(url('feedback.php')) ?>">Feedback</a></li>
                     </ul>
                 </nav>
 
                 <div class="footer-col">
                     <h2 class="footer-heading">Get in touch</h2>
                     <ul>
-                        <li><a href="mailto:<?= e($site['email']) ?>"><i class="bi bi-envelope" aria-hidden="true"></i><?= e($site['email']) ?></a></li>
+                        <li><a href="mailto:<?= e($site['email']) ?>" data-reach="email"><i class="bi bi-envelope" aria-hidden="true"></i><?= e($site['email']) ?></a></li>
                         <li><i class="bi bi-geo-alt" aria-hidden="true"></i><?= e($site['location']) ?> (GMT+8)</li>
                         <li><i class="bi bi-clock" aria-hidden="true"></i>Replies within one business day</li>
                     </ul>
@@ -57,5 +60,6 @@ $site = config('site');
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="<?= e(asset('assets/js/main.js')) ?>"></script>
     <script src="<?= e(asset('assets/js/chatbot.js')) ?>"></script>
+    <script src="<?= e(asset('assets/js/motion.js')) ?>"></script>
 </body>
 </html>
