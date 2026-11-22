@@ -5,6 +5,7 @@
  * Field options:
  *   label, type (text|textarea|url|number|icon|image), required, max (length),
  *   min/max for numbers, placeholder, col (Bootstrap column class), default.
+ * Resource option `page_size`: show that many table rows, with a "See more" button for the rest.
  * `image` fields accept a path/URL and also show an upload input.
  */
 
@@ -46,6 +47,7 @@ return [
         'singular' => 'skill',
         'kicker' => 'Portfolio content',
         'order' => 'category, name',
+        'page_size' => 10,
         'columns' => ['name' => 'Name', 'category' => 'Category', 'proficiency' => 'Level'],
         'fields' => [
             'name' => ['label' => 'Skill name', 'required' => true, 'max' => 100],

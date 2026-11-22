@@ -33,14 +33,15 @@ require APP_PATH . '/views/partials/head.php';
 
             <div class="collapse navbar-collapse" id="mainNav">
                 <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-1">
+                    <?php $navIndex = 0; ?>
                     <?php foreach ($navigationItems as $key => [$label, $href]): ?>
-                        <li class="nav-item">
+                        <li class="nav-item" style="--i: <?= $navIndex++ ?>">
                             <a class="nav-link <?= $activePage === $key ? 'active' : '' ?>" href="<?= e(url($href)) ?>" <?= $activePage === $key ? 'aria-current="page"' : '' ?>>
                                 <?= e($label) ?>
                             </a>
                         </li>
                     <?php endforeach; ?>
-                    <li class="nav-item nav-item-cta">
+                    <li class="nav-item nav-item-cta" style="--i: <?= $navIndex ?>">
                         <a class="btn btn-primary btn-nav <?= $activePage === 'contact' ? 'active' : '' ?>" href="<?= e(url('contact.php')) ?>" <?= $activePage === 'contact' ? 'aria-current="page"' : '' ?>>
                             Get in touch
                         </a>

@@ -11,6 +11,8 @@ require APP_PATH . '/views/partials/head.php';
 ?>
 <body>
     <main class="admin-signin min-vh-100 d-flex align-items-center">
+        <span class="auth-orb auth-orb-one" aria-hidden="true"></span>
+        <span class="auth-orb auth-orb-two" aria-hidden="true"></span>
         <div class="container">
             <div class="row justify-content-center">
                 <div class="col-md-6 col-lg-5 col-xl-4">

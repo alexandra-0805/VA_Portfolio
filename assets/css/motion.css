@@ -10,7 +10,7 @@
     --fx-ease: cubic-bezier(.2, .7, .2, 1);
     --fx-spring: cubic-bezier(.34, 1.56, .64, 1);
     --fx-rise: 26px;
-    --marker: rgba(216, 101, 67, .2);
+    --marker: rgba(var(--accent-rgb), .2);
 }
 
 @media (max-width: 767px) {
@@ -45,6 +45,30 @@
     font-style: inherit;
     font-weight: inherit;
     letter-spacing: inherit;
+}
+
+/* Soft background shapes on the sign-in pages (they drift when motion is allowed). */
+.auth-orb {
+    position: absolute;
+    z-index: 0;
+    border-radius: 50%;
+    pointer-events: none;
+}
+
+.auth-orb-one {
+    width: 18rem;
+    height: 18rem;
+    bottom: -7rem;
+    left: -6rem;
+    background: radial-gradient(circle, rgba(var(--accent-rgb), .14), transparent 70%);
+}
+
+.auth-orb-two {
+    width: 12rem;
+    height: 12rem;
+    top: 18%;
+    right: 8%;
+    background: radial-gradient(circle, rgba(28, 107, 104, .12), transparent 70%);
 }
 
 /* Scroll progress bar ----------------------------------------------------- */
@@ -123,10 +147,6 @@
     /* The top bars stay in place while the page content changes underneath. */
     .site-nav {
         view-transition-name: site-nav;
-    }
-
-    .admin-nav-bar {
-        view-transition-name: admin-nav;
     }
 
     .portfolio-chatbot-launcher {
@@ -256,34 +276,26 @@
         }
     }
 
-    /* Icon hover animations ------------------------------------------------ */
+    /* Icon animations ------------------------------------------------------
+     * Each one plays on:
+     *   - mouse hover, only on devices that really hover (inside @media (hover: hover)),
+     *     so a tap on a phone can never leave an animation stuck on;
+     *   - keyboard focus (:focus-visible);
+     *   - a tap on touch screens (.fx-tap, added for a moment by motion.js).
+     * Icons never change their display on hover: that knocked the centred ones
+     * (dashboard, resume, feature and contact icons) out of place. */
 
-    .service-card:hover .service-icon i,
-    .feature-panel:hover > i,
-    .trust-grid li:hover i,
-    .process-step:hover .process-icon i,
-    .resume-entry:hover .resume-entry-icon,
-    .dashboard-stat-link:hover .dashboard-stat-icon,
-    .admin-nav-link:hover i,
-    .certificate-card:hover .bi-award {
+    /* Plain inline icons become inline-block once, so they can move. */
+    .certificate-card .bi-award,
+    .site-footer li a i,
+    .resume-contact i,
+    .cta-email i,
+    .service-icon i,
+    .process-icon i,
+    .social-links a i,
+    .admin-auth-brand-icon i,
+    .portfolio-chatbot-launcher > i {
         display: inline-block;
-        animation: fx-wiggle .65s ease;
-    }
-
-    .contact-links a:hover i,
-    .site-footer li a:hover i {
-        display: inline-grid;
-        animation: fx-bounce .6s var(--fx-spring);
-    }
-
-    .social-links a:hover {
-        transform: translateY(-4px) rotate(-6deg);
-        background: var(--accent);
-    }
-
-    .social-links a:hover i {
-        display: inline-block;
-        animation: fx-pop .55s var(--fx-spring);
     }
 
     .btn .bi-send,
@@ -291,35 +303,18 @@
     .btn .bi-star,
     .btn .bi-printer,
     .btn .bi-box-arrow-up-right,
+    .btn .bi-plus-lg,
+    .btn .bi-upload,
+    .btn .bi-file-earmark-text,
     .back-top i,
-    .project-back-link i {
+    .project-back-link i,
+    .portfolio-chatbot-icon-btn i,
+    .portfolio-chatbot-prompts button i,
+    .certificate-viewer-close i,
+    .password-toggle i,
+    .dashboard-stat-arrow {
         display: inline-block;
-        transition: transform .3s var(--fx-spring);
-    }
-
-    .btn:hover .bi-send {
-        transform: translate(4px, -4px) rotate(-8deg);
-    }
-
-    .btn:hover .bi-download {
-        animation: fx-drop .8s ease infinite;
-    }
-
-    .btn:hover .bi-star {
-        transform: rotate(72deg) scale(1.15);
-    }
-
-    .btn:hover .bi-printer,
-    .btn:hover .bi-box-arrow-up-right {
-        transform: translate(2px, -2px);
-    }
-
-    .back-top:hover i {
-        animation: fx-up .8s ease infinite;
-    }
-
-    .project-back-link:hover i {
-        transform: translateX(-4px);
+        transition: transform .3s var(--fx-spring), opacity .2s ease;
     }
 
     .navbar-brand span,
@@ -328,14 +323,194 @@
         transition: transform .35s var(--fx-spring), color .2s ease;
     }
 
-    .navbar-brand:hover span,
-    .brand-mark:hover span {
+    /* Keyboard focus and taps */
+    .service-card:is(:has(:focus-visible), .fx-tap) .service-icon i,
+    .feature-panel.fx-tap > i,
+    .process-step.fx-tap .process-icon i,
+    .resume-entry.fx-tap .resume-entry-icon,
+    .dashboard-stat-link:is(:focus-visible, .fx-tap) .dashboard-stat-icon,
+    .certificate-card:is(:focus-visible, :has(:focus-visible), .fx-tap) .bi-award,
+    .portfolio-chatbot-launcher:is(:focus-visible, .fx-tap) > i {
+        animation: fx-wiggle .65s ease;
+    }
+
+    :is(.contact-links a, .site-footer li a, .resume-contact a, .cta-email):is(:focus-visible, .fx-tap) i {
+        animation: fx-bounce .6s var(--fx-spring);
+    }
+
+    .social-links a:is(:focus-visible, .fx-tap) {
+        transform: translateY(-4px) rotate(-6deg);
+        background: var(--accent);
+    }
+
+    .social-links a:is(:focus-visible, .fx-tap) i {
+        animation: fx-pop .55s var(--fx-spring);
+    }
+
+    .btn:is(:focus-visible, .fx-tap) .bi-send {
+        transform: translate(4px, -4px) rotate(-8deg);
+    }
+
+    .btn:is(:focus-visible, .fx-tap) .bi-download {
+        animation: fx-drop .8s ease infinite;
+    }
+
+    .btn:is(:focus-visible, .fx-tap) .bi-star {
+        transform: rotate(72deg) scale(1.15);
+    }
+
+    .btn:is(:focus-visible, .fx-tap) :is(.bi-printer, .bi-box-arrow-up-right) {
+        transform: translate(2px, -2px);
+    }
+
+    .btn:is(:focus-visible, .fx-tap) .bi-plus-lg {
+        transform: rotate(90deg) scale(1.15);
+    }
+
+    .btn:is(:focus-visible, .fx-tap) .bi-upload {
+        animation: fx-up .8s ease infinite;
+    }
+
+    .btn:is(:focus-visible, .fx-tap) .bi-file-earmark-text {
+        transform: rotate(-8deg) scale(1.12);
+    }
+
+    :is(.btn, .text-link):is(:focus-visible, .fx-tap) .bi-arrow-right,
+    .project-card-link:is(:focus-visible, .fx-tap) .project-cta i {
+        transform: translateX(3px);
+    }
+
+    .back-top:is(:focus-visible, .fx-tap) i {
+        animation: fx-up .8s ease infinite;
+    }
+
+    .project-back-link:is(:focus-visible, .fx-tap) i {
+        transform: translateX(-4px);
+    }
+
+    .portfolio-chatbot-icon-btn:is(:focus-visible, .fx-tap) .bi-arrow-counterclockwise {
+        transform: rotate(-200deg);
+    }
+
+    :is(.portfolio-chatbot-icon-btn, .certificate-viewer-close):is(:focus-visible, .fx-tap) .bi-x-lg {
+        transform: rotate(90deg);
+    }
+
+    .portfolio-chatbot-prompts button:is(:focus-visible, .fx-tap) i {
+        transform: scale(1.2) rotate(-8deg);
+    }
+
+    .password-toggle:is(:focus-visible, .fx-tap) i {
+        animation: fx-blink .45s ease;
+    }
+
+    .dashboard-stat-link:is(:focus-visible, .fx-tap) .dashboard-stat-arrow {
+        opacity: 1;
+        transform: translate(2px, -2px);
+    }
+
+    :is(.navbar-brand, .brand-mark):focus-visible span {
         transform: translateY(-5px) scale(1.4);
     }
 
-    .portfolio-chatbot-launcher:hover > i {
-        display: inline-block;
-        animation: fx-wiggle .65s ease;
+    /* Mouse hover (real hover devices only) */
+    @media (hover: hover) {
+        .service-card:hover .service-icon i,
+        .feature-panel:hover > i,
+        .process-step:hover .process-icon i,
+        .resume-entry:hover .resume-entry-icon,
+        .dashboard-stat-link:hover .dashboard-stat-icon,
+        .certificate-card:hover .bi-award,
+        .portfolio-chatbot-launcher:hover > i,
+        .admin-auth-card:hover .admin-auth-brand-icon i {
+            animation: fx-wiggle .65s ease;
+        }
+
+        :is(.contact-links a, .site-footer li a, .resume-contact a, .cta-email):hover i {
+            animation: fx-bounce .6s var(--fx-spring);
+        }
+
+        .social-links a:hover {
+            transform: translateY(-4px) rotate(-6deg);
+            background: var(--accent);
+        }
+
+        .social-links a:hover i {
+            animation: fx-pop .55s var(--fx-spring);
+        }
+
+        .btn:hover .bi-send {
+            transform: translate(4px, -4px) rotate(-8deg);
+        }
+
+        .btn:hover .bi-download {
+            animation: fx-drop .8s ease infinite;
+        }
+
+        .btn:hover .bi-star {
+            transform: rotate(72deg) scale(1.15);
+        }
+
+        .btn:hover :is(.bi-printer, .bi-box-arrow-up-right) {
+            transform: translate(2px, -2px);
+        }
+
+        .btn:hover .bi-plus-lg {
+            transform: rotate(90deg) scale(1.15);
+        }
+
+        .btn:hover .bi-upload {
+            animation: fx-up .8s ease infinite;
+        }
+
+        .btn:hover .bi-file-earmark-text {
+            transform: rotate(-8deg) scale(1.12);
+        }
+
+        .back-top:hover i {
+            animation: fx-up .8s ease infinite;
+        }
+
+        .project-back-link:hover i {
+            transform: translateX(-4px);
+        }
+
+        .portfolio-chatbot-icon-btn:hover .bi-arrow-counterclockwise {
+            transform: rotate(-200deg);
+        }
+
+        :is(.portfolio-chatbot-icon-btn, .certificate-viewer-close):hover .bi-x-lg {
+            transform: rotate(90deg);
+        }
+
+        .portfolio-chatbot-prompts button:hover i {
+            transform: scale(1.2) rotate(-8deg);
+        }
+
+        .password-toggle:hover i {
+            animation: fx-blink .45s ease;
+        }
+
+        .dashboard-stat-link:hover .dashboard-stat-arrow {
+            opacity: 1;
+            transform: translate(2px, -2px);
+        }
+
+        .navbar-brand:hover span,
+        .brand-mark:hover span {
+            transform: translateY(-5px) scale(1.4);
+        }
+    }
+
+    @keyframes fx-blink {
+        0%,
+        100% {
+            transform: none;
+        }
+
+        45% {
+            transform: scaleY(.1);
+        }
     }
 
     @keyframes fx-wiggle {
@@ -435,6 +610,396 @@
         }
     }
 
+    /* Headers --------------------------------------------------------------
+     * .fx-intro is set by partials/head.php on the first page of a visit only,
+     * so the bars don't replay their entrance on every click. */
+
+    /* Public site navigation */
+    .fx-intro .site-nav.fixed-top {
+        animation: fx-nav-in .7s var(--fx-ease) backwards;
+    }
+
+    .fx-intro .site-nav .navbar-brand {
+        animation: fx-slide-right .7s var(--fx-ease) .15s backwards;
+    }
+
+    .fx-intro .site-nav .navbar-toggler {
+        animation: fx-pop .6s var(--fx-spring) .3s backwards;
+    }
+
+    .fx-intro .site-nav .btn-nav::after {
+        animation: fx-shine 1.1s ease 1.2s;
+    }
+
+    /* The current page's underline draws itself on every page. */
+    .nav-link.active::after {
+        animation: fx-underline .6s var(--fx-ease) .2s backwards;
+    }
+
+    .navbar-toggler .bi {
+        display: inline-block;
+        transition: transform .35s var(--fx-spring);
+    }
+
+    .navbar-toggler[aria-expanded="true"] .bi {
+        transform: rotate(90deg);
+    }
+
+    @media (min-width: 992px) {
+        .fx-intro .site-nav .nav-item {
+            animation: fx-drop-in .6s var(--fx-ease) backwards;
+            animation-delay: calc(var(--i, 0) * 60ms + 250ms);
+        }
+    }
+
+    /* Phone menu: links cascade in each time it opens. */
+    @media (max-width: 991.98px) {
+        .site-nav:has(.navbar-toggler[aria-expanded="true"]) .nav-item {
+            animation: fx-drop-in .45s var(--fx-ease) backwards;
+            animation-delay: calc(var(--i, 0) * 45ms + 60ms);
+        }
+    }
+
+    /* Admin top bar and section tabs */
+    .fx-intro .admin-topbar {
+        animation: fx-nav-in .6s var(--fx-ease) backwards;
+    }
+
+    .fx-intro .admin-topbar-actions > * {
+        animation: fx-drop-in .5s var(--fx-ease) backwards;
+    }
+
+    .fx-intro .admin-topbar-actions > :first-child {
+        animation-delay: .25s;
+    }
+
+    .fx-intro .admin-topbar-actions > :last-child {
+        animation-delay: .32s;
+    }
+
+    .fx-intro .admin-nav-link {
+        animation: fx-drop-in .5s var(--fx-ease) backwards;
+        animation-delay: calc(var(--i, 0) * 40ms + 200ms);
+    }
+
+    /* Tab underline grows from the middle instead of blinking on. */
+    .admin-nav-link {
+        position: relative;
+    }
+
+    .admin-nav-link:hover,
+    .admin-nav-link.active {
+        border-bottom-color: transparent;
+    }
+
+    .admin-nav-link::after {
+        content: '';
+        position: absolute;
+        right: 0;
+        bottom: -2px;
+        left: 0;
+        height: 2px;
+        background: var(--accent);
+        border-radius: 999px;
+        transform: scaleX(0);
+        transition: transform .3s var(--fx-ease);
+    }
+
+    .admin-nav-link:hover::after,
+    .admin-nav-link.active::after {
+        transform: scaleX(1);
+    }
+
+    .admin-nav-link.active::after {
+        animation: fx-underline .6s var(--fx-ease) .15s backwards;
+    }
+
+    /* Sliding nav highlight, public site and admin (motion.js adds .has-indicator
+       plus the pill and line). A soft pill and the orange underline glide to the
+       hovered link and spring back to the current page's link when the mouse leaves. */
+    .has-indicator {
+        position: relative;
+    }
+
+    .has-indicator :is(.admin-nav-link, .nav-link) {
+        z-index: 1;
+        transition: color .2s ease, transform .3s var(--fx-spring);
+    }
+
+    .has-indicator :is(.admin-nav-link, .nav-link)::after {
+        display: none;
+    }
+
+    .nav-indicator-pill,
+    .nav-indicator-line {
+        position: absolute;
+        top: auto;
+        left: 0;
+        width: 0;
+        pointer-events: none;
+        border-radius: 999px;
+        transition: transform .5s var(--fx-spring), width .5s var(--fx-spring), opacity .25s ease;
+    }
+
+    .nav-indicator-pill {
+        top: 50%;
+        z-index: 0;
+        height: 2.2rem;
+        margin-top: -1.1rem;
+        background: rgba(var(--accent-rgb), .09);
+        opacity: 0;
+    }
+
+    .nav-indicator-line {
+        bottom: 0;
+        height: 2px;
+        background: var(--accent);
+        animation: fx-line-grow .6s var(--fx-ease) .25s backwards;
+    }
+
+    /* Public nav: underline sits where the old one did. */
+    .navbar-nav > .nav-indicator-line {
+        bottom: .25rem;
+    }
+
+    .is-placing > :is(.nav-indicator-pill, .nav-indicator-line) {
+        transition: none;
+    }
+
+    /* The phone menu is a vertical list: keep its plain look there. */
+    @media (max-width: 991.98px) {
+        .navbar-nav > :is(.nav-indicator-pill, .nav-indicator-line) {
+            display: none;
+        }
+    }
+
+    @media (hover: hover) {
+        .has-indicator .admin-nav-link:hover {
+            color: var(--ink);
+            transform: translateY(-1px);
+        }
+
+        .has-indicator .nav-link:hover {
+            transform: translateY(-1px);
+        }
+    }
+
+    /* Sign out: lifts a little on hover. */
+    .admin-signout {
+        transition: color .2s ease, background-color .2s ease, border-color .2s ease,
+            transform .3s var(--fx-spring), box-shadow .3s ease;
+    }
+
+    @media (hover: hover) {
+        .admin-signout:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 18px rgba(23, 34, 31, .14);
+        }
+    }
+
+    @keyframes fx-line-grow {
+        from {
+            scale: 0 1;
+        }
+    }
+
+    .admin-view-site {
+        background: linear-gradient(currentColor, currentColor) 0 100% / 0 1.5px no-repeat;
+        transition: color .2s ease, background-size .35s var(--fx-ease);
+    }
+
+    .admin-view-site:hover {
+        background-size: 100% 1.5px;
+    }
+
+    .admin-view-site i,
+    .admin-signout i,
+    .admin-auth-footer a i {
+        display: inline-block;
+        transition: transform .3s var(--fx-spring);
+    }
+
+    .admin-view-site:is(:focus-visible, .fx-tap) i {
+        transform: translate(2px, -2px);
+    }
+
+    .admin-signout:is(:focus-visible, .fx-tap) i {
+        transform: translateX(3px);
+    }
+
+    @media (hover: hover) {
+        .admin-view-site:hover i {
+            transform: translate(2px, -2px);
+        }
+
+        .admin-signout:hover i {
+            transform: translateX(3px);
+        }
+
+        .admin-auth-footer a:hover .bi-arrow-left {
+            transform: translateX(-3px);
+        }
+    }
+
+    /* Alerts slide in; a sign-in error gives a small shake. */
+    .admin-body main > .alert,
+    .admin-auth-card .alert {
+        animation: fx-alert .5s var(--fx-spring) backwards;
+    }
+
+    .admin-auth-card .alert-danger {
+        animation: fx-alert .5s var(--fx-spring) backwards, fx-shake .5s ease .35s;
+    }
+
+    /* Sign-in / sign-up / reset pages */
+    .admin-signin::before {
+        animation: fx-drift 16s ease-in-out infinite alternate;
+    }
+
+    .auth-orb {
+        animation: fx-drift 18s ease-in-out infinite alternate;
+    }
+
+    .auth-orb-two {
+        animation-duration: 22s;
+        animation-direction: alternate-reverse;
+    }
+
+    .admin-auth-brand-icon {
+        animation: fx-pop .75s var(--fx-spring) .35s backwards;
+    }
+
+    .admin-auth-card form > * {
+        animation: fx-rise .6s var(--fx-ease) backwards;
+        animation-delay: 380ms;
+    }
+
+    .admin-auth-card form > :nth-child(3) { animation-delay: 450ms; }
+    .admin-auth-card form > :nth-child(4) { animation-delay: 520ms; }
+    .admin-auth-card form > :nth-child(5) { animation-delay: 590ms; }
+    .admin-auth-card form > :nth-child(n + 6) { animation-delay: 660ms; }
+
+    .admin-auth-footer {
+        animation: fx-fade-in .6s ease .75s backwards;
+    }
+
+    .admin-auth-footer a:is(:focus-visible, .fx-tap) .bi-arrow-left {
+        transform: translateX(-3px);
+    }
+
+    @keyframes fx-nav-in {
+        from {
+            opacity: 0;
+            transform: translateY(-100%);
+        }
+    }
+
+    @keyframes fx-drop-in {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+    }
+
+    @keyframes fx-slide-right {
+        from {
+            opacity: 0;
+            transform: translateX(-14px);
+        }
+    }
+
+    @keyframes fx-underline {
+        from {
+            transform: scaleX(0);
+        }
+    }
+
+    @keyframes fx-shine {
+        from {
+            transform: translateX(-120%);
+        }
+
+        to {
+            transform: translateX(120%);
+        }
+    }
+
+    @keyframes fx-alert {
+        from {
+            opacity: 0;
+            transform: translateY(-8px) scale(.98);
+        }
+    }
+
+    @keyframes fx-shake {
+        0%,
+        100% {
+            transform: none;
+        }
+
+        20% {
+            transform: translateX(-6px);
+        }
+
+        40% {
+            transform: translateX(5px);
+        }
+
+        60% {
+            transform: translateX(-3px);
+        }
+
+        80% {
+            transform: translateX(2px);
+        }
+    }
+
+    @keyframes fx-drift {
+        to {
+            transform: translate(-28px, 22px) scale(1.08);
+        }
+    }
+
+    /* Text hover: lifts slightly with a soft glow (same effect as the Mentora hero).
+     * Headings, paragraphs and kickers in the page and footer; text inside buttons,
+     * forms, tables, the nav and the chatbot is left alone. Mouse devices only. */
+    @media (hover: hover) {
+        /* :where() keeps this at zero specificity, so any existing transition wins. */
+        :where(main, .site-footer) :where(h1, h2, h3, h4, h5, h6, p, blockquote, .section-kicker):where(:not(:is(form, table, nav, .btn, .portfolio-chatbot) *)) {
+            transition: transform .22s ease, text-shadow .22s ease, color .2s ease;
+        }
+
+        :is(main, .site-footer) :is(h1, h2, h3, h4, h5, h6, p, blockquote, .section-kicker):not(:is(form, table, nav, .btn, .portfolio-chatbot) *):hover {
+            text-shadow: 0 8px 26px var(--text-glow, rgba(var(--accent-rgb), .22));
+            transform: translateY(-4px) scale(1.01);
+        }
+
+        /* Hero "Tools I work with" label and pills, and the dark highlights strip. */
+        .hero-tools-label,
+        .hero-tools-list li,
+        .trust-grid > li > span {
+            transition: transform .22s ease, text-shadow .22s ease, box-shadow .22s ease;
+        }
+
+        .hero-tools-label:hover,
+        .trust-grid > li:hover > span {
+            text-shadow: 0 8px 26px var(--text-glow, rgba(var(--accent-rgb), .22));
+            transform: translateY(-4px) scale(1.01);
+        }
+
+        .hero-tools-list li:hover {
+            text-shadow: 0 8px 26px rgba(var(--accent-rgb), .22);
+            box-shadow: 0 8px 18px rgba(23, 34, 31, .08);
+            transform: translateY(-4px) scale(1.03);
+        }
+
+        /* Dark sections get a pale glow instead of a warm one. */
+        .cta-card,
+        .trust-strip {
+            --text-glow: rgba(228, 242, 240, .26);
+        }
+    }
+
     /* Touch screens: cards and buttons respond to a tap. */
     @media (hover: none) {
         .service-card:active,
@@ -465,7 +1030,7 @@
     }
 
     .cursor-ring {
-        z-index: 2147483000;
+        display: none;
     }
 
     .cursor-glow {
@@ -485,7 +1050,7 @@
         left: -18px;
         width: 36px;
         height: 36px;
-        border: 1.5px solid rgba(216, 101, 67, .75);
+        border: 1.5px solid rgba(var(--accent-rgb), .75);
         border-radius: 50%;
         transition: transform .3s var(--fx-spring), background-color .25s ease, border-color .25s ease, opacity .25s ease;
     }
@@ -498,11 +1063,11 @@
         width: 380px;
         height: 380px;
         border-radius: 50%;
-        background: radial-gradient(circle, rgba(216, 101, 67, .13), rgba(28, 107, 104, .07) 40%, transparent 70%);
+        background: radial-gradient(circle, rgba(var(--accent-rgb), .13), rgba(28, 107, 104, .07) 40%, transparent 70%);
     }
 
     .cursor-hover .cursor-ring::before {
-        background: rgba(216, 101, 67, .12);
+        background: rgba(var(--accent-rgb), .12);
         border-color: var(--accent);
         transform: scale(1.65);
     }
@@ -531,7 +1096,7 @@
         z-index: 1;
         pointer-events: none;
         border-radius: inherit;
-        background: radial-gradient(340px circle at var(--mx, 50%) var(--my, 50%), rgba(216, 101, 67, .11), rgba(28, 107, 104, .05) 40%, transparent 65%);
+        background: radial-gradient(340px circle at var(--mx, 50%) var(--my, 50%), rgba(var(--accent-rgb), .11), rgba(28, 107, 104, .05) 40%, transparent 65%);
         mix-blend-mode: multiply;
         opacity: 0;
         transition: opacity .35s ease;

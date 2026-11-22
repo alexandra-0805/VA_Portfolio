@@ -1,7 +1,8 @@
 <?php
 /**
  * Generic editor markup: form on the left, table on the right.
- * Provided by render_resource_page(): $resource, $fields, $record, $rows, $errors, $isEditing, $page.
+ * Provided by render_resource_page(): $resource, $fields, $record, $rows, $errors, $isEditing, $page,
+ * $visibleRows (rows shown before "See more") and $pageSize.
  */
 $singular = $resource['singular'];
 $hasUpload = !empty($resource['upload_folder']);
@@ -68,7 +69,7 @@ $hasUpload = !empty($resource['upload_folder']);
         </section>
     </div>
 
-    <div class="col-lg-7">
+    <div class="col-lg-7" id="resource-table">
         <div class="table-responsive bg-white rounded-3">
             <table class="table admin-table align-middle">
                 <thead>
@@ -84,8 +85,8 @@ $hasUpload = !empty($resource['upload_folder']);
                         <tr><td colspan="<?= count($resource['columns']) + 1 ?>" class="muted">No <?= e(strtolower($resource['title'])) ?> yet.</td></tr>
                     <?php endif; ?>
 
-                    <?php foreach ($rows as $row): ?>
-                        <tr>
+                    <?php foreach ($rows as $index => $row): ?>
+                        <tr <?= $index >= $visibleRows ? 'hidden data-more-row' : '' ?>>
                             <?php foreach (array_keys($resource['columns']) as $column): ?>
                                 <td><?= e($row[$column]) ?><?= ($fields[$column]['type'] ?? '') === 'number' ? '%' : '' ?></td>
                             <?php endforeach; ?>
@@ -104,5 +105,21 @@ $hasUpload = !empty($resource['upload_folder']);
                 </tbody>
             </table>
         </div>
+
+        <?php if ($visibleRows < count($rows)): ?>
+            <div class="admin-table-more" data-more-table>
+                <span class="muted" data-more-count>
+                    Showing <?= $visibleRows ?> of <?= count($rows) ?>
+                </span>
+                <a
+                    class="btn btn-sm btn-outline-dark"
+                    href="<?= e(url('admin/' . $page . '?show=' . ($visibleRows + $pageSize))) ?>#resource-table"
+                    data-more-button
+                    data-more-step="<?= $pageSize ?>"
+                >
+                    See more
+                </a>
+            </div>
+        <?php endif; ?>
     </div>
 </div>

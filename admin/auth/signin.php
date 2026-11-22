@@ -64,7 +64,7 @@ require APP_PATH . '/views/auth/header.php';
     </div>
 
     <button class="btn btn-primary w-100" type="submit">
-        Sign in <i class="bi bi-box-arrow-in-right" aria-hidden="true"></i>
+        Sign in
     </button>
 </form>
 <?php require APP_PATH . '/views/auth/footer.php'; ?>

@@ -4,6 +4,7 @@
  *  - cursor highlight + card spotlight (mouse devices only)
  *  - word-by-word headline, highlighted words, scroll reveals, icon pops
  *  - button ripples and a scroll progress bar
+ *  - icon animations on tap for touch screens (.fx-tap; hover/focus are pure CSS)
  * Respects "reduce motion" and never hides content if anything fails.
  */
 (() => {
@@ -52,6 +53,103 @@
 	if (reduceMotion) {
 		return;
 	}
+
+	/* Touch screens: a tap plays the same icon animation a mouse hover does --- */
+	const tapTargets = [
+		'.btn', '.text-link', '.back-top', '.project-back-link', '.project-card-link',
+		'.service-card', '.feature-panel', '.process-step', '.resume-entry',
+		'.certificate-card', '.contact-links a', '.site-footer li a', '.social-links a',
+		'.resume-contact a', '.cta-email', '.dashboard-stat-link', '.admin-nav-link',
+		'.admin-view-site', '.admin-signout', '.admin-auth-footer a', '.password-toggle',
+		'.portfolio-chatbot-launcher', '.portfolio-chatbot-icon-btn', '.portfolio-chatbot-prompts button',
+		'.certificate-viewer-close',
+	].join(',');
+	const tapTimers = new WeakMap();
+
+	document.addEventListener('pointerdown', (event) => {
+		if (event.pointerType === 'mouse') {
+			return;
+		}
+		const target = event.target instanceof Element ? event.target.closest(tapTargets) : null;
+		if (!target) {
+			return;
+		}
+		// Restart the animation even on a quick second tap.
+		target.classList.remove('fx-tap');
+		void target.offsetWidth;
+		target.classList.add('fx-tap');
+		clearTimeout(tapTimers.get(target));
+		tapTimers.set(target, setTimeout(() => target.classList.remove('fx-tap'), 900));
+	}, { passive: true });
+
+	/* Header navs: a soft pill and the underline glide to the hovered link ---- *
+	 * Used by the public site nav and the admin tabs (styles: .nav-indicator-* in motion.css).
+	 * `inset`: the underline spans the link's text only, not its padding. */
+	const attachNavIndicator = (container, linkSelector, { inset = false } = {}) => {
+		const links = container ? [...container.querySelectorAll(linkSelector)] : [];
+		if (!links.length) {
+			return;
+		}
+
+		const pill = document.createElement('span');
+		const line = document.createElement('span');
+		pill.className = 'nav-indicator-pill';
+		line.className = 'nav-indicator-line';
+		pill.setAttribute('aria-hidden', 'true');
+		line.setAttribute('aria-hidden', 'true');
+		container.prepend(pill, line);
+		container.classList.add('has-indicator', 'is-placing');
+
+		const activeLink = links.find((link) => link.classList.contains('active'));
+		const moveTo = (link, showPill) => {
+			if (!link || !link.offsetWidth) {
+				pill.style.opacity = '0';
+				line.style.opacity = '0';
+				return;
+			}
+			// Measured from the on-screen boxes: offsetLeft is unreliable while the
+			// links' entrance animation (a transform) is still running.
+			const left = link.getBoundingClientRect().left - container.getBoundingClientRect().left + container.scrollLeft;
+			const width = link.offsetWidth;
+			let lineLeft = left;
+			let lineWidth = width;
+			if (inset) {
+				const style = getComputedStyle(link);
+				const padLeft = parseFloat(style.paddingLeft) || 0;
+				lineLeft += padLeft;
+				lineWidth -= padLeft + (parseFloat(style.paddingRight) || 0);
+			}
+			pill.style.transform = `translateX(${left}px)`;
+			pill.style.width = `${width}px`;
+			line.style.transform = `translateX(${lineLeft}px)`;
+			line.style.width = `${lineWidth}px`;
+			pill.style.opacity = showPill ? '1' : '0';
+			line.style.opacity = '1';
+		};
+		const rest = () => moveTo(activeLink, false);
+
+		links.forEach((link) => {
+			link.addEventListener('pointerenter', () => moveTo(link, true));
+			link.addEventListener('focus', () => moveTo(link, true));
+			link.addEventListener('blur', rest);
+		});
+		container.addEventListener('pointerleave', rest);
+		window.addEventListener('resize', rest);
+		document.fonts?.ready.then(rest);
+		// Re-place once the links' entrance animation has finished (unless one is hovered).
+		container.addEventListener('animationend', () => {
+			if (!container.matches(':hover')) {
+				rest();
+			}
+		});
+
+		// Start under the current link without sliding in from the left on load.
+		rest();
+		requestAnimationFrame(() => requestAnimationFrame(() => container.classList.remove('is-placing')));
+	};
+
+	attachNavIndicator(document.querySelector('.admin-topbar .admin-nav-list'), '.admin-nav-link');
+	attachNavIndicator(document.querySelector('.site-nav .navbar-nav'), '.nav-link', { inset: true });
 
 	/* Page transitions (only where the browser has no View Transitions) ---- */
 	if (root.classList.contains('no-vt')) {

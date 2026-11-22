@@ -26,9 +26,13 @@ INSERT IGNORE INTO skills (name, category, proficiency) VALUES
 ('CSS', 'Development', 76), ('JavaScript', 'Development', 68),
 ('PHP', 'Development', 65), ('MySQL', 'Development', 64),
 ('Data Entry', 'Administration', 90), ('Internet Research', 'Administration', 88),
-('File Management', 'Administration', 86), ('Customer Support', 'Communication', 85);
+('File Management', 'Administration', 86), ('Customer Support', 'Communication', 85),
+('Git', 'Development', 65), ('XAMPP & phpMyAdmin', 'Development', 75),
+('AI Integration', 'Development', 70), ('API Integration', 'Development', 65),
+('Team Leadership', 'Communication', 80);
 
 INSERT IGNORE INTO projects (title, description, technologies, image, project_url) VALUES
+('Mentora PH Recruitment System', 'A web-based HR recruitment and onboarding system built by a team I led as lead developer. It handles recruitment links, applications with resume upload, AI resume screening matched to department skill gaps, intern training tracking and AI assessment, evaluations, messaging, notifications, Google sign-in, and consolidated PDF/CSV reports for HR admins, agents, interns, and Employee VA applicants.', 'PHP, MySQL, HTML, CSS, JavaScript, XAMPP, phpMyAdmin, Git, Google OAuth, Gmail SMTP, AI APIs', 'assets/images/projects/mentora.png', NULL),
 ('Bakeshop Website', 'A friendly front-end website concept designed to improve customer engagement.', 'HTML, CSS, JavaScript', 'https://images.unsplash.com/photo-1555507036-ab1f4038808a?auto=format&fit=crop&w=900&q=80', 'https://drive.google.com/drive/folders/1x1cmwo_GXkbv3--IOjZ4E0WYpWzk7cJ7?usp=sharing'),
 ('Wooden Perfume Bottle', 'An innovative product concept developed and presented as a team.', 'Research, Presentation, Design', 'https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&w=900&q=80', 'https://drive.google.com/drive/folders/1tiwzumF9iTp8SrpSbn3vqVrnbLfPrGKK?usp=sharing'),
 ('Digital Content Projects', 'Social media and promotional graphics created for small business ideas.', 'Canva, Content Planning, AI Tools', 'https://images.unsplash.com/photo-1558655146-9f40138edfeb?auto=format&fit=crop&w=900&q=80', 'https://drive.google.com/drive/folders/13AQiPXZFps0GQXkdQPmDbbFtpRQhavoY?usp=sharing'),

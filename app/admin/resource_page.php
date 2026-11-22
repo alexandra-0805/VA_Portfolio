@@ -51,6 +51,26 @@ function render_resource_page(string $key): void
 
     $rows = db_query("SELECT * FROM {$table} ORDER BY {$resource['order']}")->fetchAll();
     $isEditing = !empty($record['id']);
+
+    // Optional row limit with "See more" (resource 'page_size'). ?show=N shows more
+    // without JavaScript, and the row being edited is always kept visible.
+    $pageSize = (int) ($resource['page_size'] ?? 0);
+    $visibleRows = count($rows);
+
+    if ($pageSize > 0) {
+        $visibleRows = max($pageSize, (int) ($_GET['show'] ?? 0));
+
+        if ($isEditing) {
+            foreach ($rows as $index => $row) {
+                if ((int) $row['id'] === (int) $record['id']) {
+                    $visibleRows = max($visibleRows, $index + 1);
+                    break;
+                }
+            }
+        }
+
+        $visibleRows = min($visibleRows, count($rows));
+    }
     $adminTitle = $resource['title'];
 
     require APP_PATH . '/views/admin/header.php';

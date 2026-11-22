@@ -45,7 +45,7 @@ $site = config('site');
             <div class="footer-bottom">
                 <small>&copy; <?= date('Y') ?> <?= e($site['name']) ?>. All rights reserved.</small>
                 <a href="<?= e(url('contact.php')) ?>" class="text-link">
-                    Start a project <i class="bi bi-arrow-right" aria-hidden="true"></i>
+                    Start a project
                 </a>
             </div>
         </div>
@@ -58,6 +58,7 @@ $site = config('site');
     </button>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="<?= e(asset('assets/js/theme.js')) ?>"></script>
     <script src="<?= e(asset('assets/js/main.js')) ?>"></script>
     <script src="<?= e(asset('assets/js/chatbot.js')) ?>"></script>
     <script src="<?= e(asset('assets/js/motion.js')) ?>"></script>

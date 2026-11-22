@@ -56,15 +56,15 @@ $contentMix = [
 $maxContentMix = max(array_column($contentMix, 'value')) ?: 1;
 
 $dashboardCards = [
-    ['key' => 'projects', 'label' => 'Projects', 'icon' => 'bi-grid', 'url' => 'projects.php'],
-    ['key' => 'skills', 'label' => 'Skills', 'icon' => 'bi-bar-chart', 'url' => 'skills.php'],
-    ['key' => 'services', 'label' => 'Services', 'icon' => 'bi-stars', 'url' => 'services.php'],
-    ['key' => 'messages', 'label' => 'Messages', 'icon' => 'bi-envelope', 'url' => 'messages.php'],
-    ['key' => 'feedback', 'label' => 'Reviews', 'icon' => 'bi-star', 'url' => 'feedback.php'],
-    ['key' => 'visitors', 'label' => 'Visitors (30 days)', 'icon' => 'bi-people', 'url' => 'visitors.php'],
-    ['key' => 'reports', 'label' => 'Reports', 'icon' => 'bi-bar-chart-line', 'url' => 'reports.php', 'value' => 'View'],
-    ['key' => 'certificates', 'label' => 'Certificates', 'icon' => 'bi-award', 'url' => 'certificates.php'],
-    ['key' => 'resume', 'label' => 'Resume', 'icon' => 'bi-file-earmark-person', 'url' => 'resume.php', 'value' => 'PDF'],
+    ['key' => 'projects', 'label' => 'Projects', 'url' => 'projects.php'],
+    ['key' => 'skills', 'label' => 'Skills', 'url' => 'skills.php'],
+    ['key' => 'services', 'label' => 'Services', 'url' => 'services.php'],
+    ['key' => 'messages', 'label' => 'Messages', 'url' => 'messages.php'],
+    ['key' => 'feedback', 'label' => 'Reviews', 'url' => 'feedback.php'],
+    ['key' => 'visitors', 'label' => 'Visitors (30 days)', 'url' => 'visitors.php'],
+    ['key' => 'reports', 'label' => 'Reports', 'url' => 'reports.php', 'value' => 'View'],
+    ['key' => 'certificates', 'label' => 'Certificates', 'url' => 'certificates.php'],
+    ['key' => 'resume', 'label' => 'Resume', 'url' => 'resume.php', 'value' => 'PDF'],
 ];
 
 require APP_PATH . '/views/admin/header.php';
@@ -82,33 +82,25 @@ require APP_PATH . '/views/admin/header.php';
     </div>
     <div class="admin-page-header-actions">
         <a class="btn btn-primary" href="../index.php" target="_blank" rel="noopener">
-            <i class="bi bi-box-arrow-up-right" aria-hidden="true"></i>
             View live site
         </a>
         <a class="btn btn-outline-dark" href="reports.php">
-            <i class="bi bi-file-earmark-bar-graph" aria-hidden="true"></i>
             View reports
         </a>
     </div>
 </div>
 
-<div class="row g-4 mb-5">
+<div class="dashboard-stat-grid mb-5">
     <?php foreach ($dashboardCards as $card): ?>
-        <div class="col-md-6 col-lg-3">
+        <div>
             <a
                 class="dashboard-stat-link"
                 href="<?= e($card['url']) ?>"
                 aria-label="Open <?= e($card['label']) ?>"
             >
                 <div class="soft-panel dashboard-stat-card h-100">
-                    <div class="dashboard-stat-card-top">
-                        <i
-                            class="bi <?= e($card['icon']) ?> dashboard-stat-icon"
-                            aria-hidden="true"
-                        ></i>
-                        <i class="bi bi-arrow-up-right dashboard-stat-arrow" aria-hidden="true"></i>
-                    </div>
-                    <div class="display-6 fw-bold mt-3">
+                    <i class="bi bi-arrow-up-right dashboard-stat-arrow" aria-hidden="true"></i>
+                    <div class="dashboard-stat-value">
                         <?= e($card['value'] ?? $counts[$card['key']]) ?>
                     </div>
                     <div class="dashboard-stat-label">

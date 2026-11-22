@@ -10,13 +10,13 @@ $feedbackSummary = get_feedback_summary();
 $homeFeedback = get_feedback(4);
 
 $highlights = [
-    ['icon' => 'bi-kanban', 'title' => 'Organized support', 'text' => 'Clear systems for busy workflows'],
-    ['icon' => 'bi-chat-heart', 'title' => 'People-first communication', 'text' => 'Patient, professional client care'],
-    ['icon' => 'bi-bullseye', 'title' => 'Detail-oriented', 'text' => 'Accurate data and tidy records'],
-    ['icon' => 'bi-lightning-charge', 'title' => 'Digital-ready mindset', 'text' => 'Quick to learn new tools'],
+    ['title' => 'Organized support', 'text' => 'Clear systems for busy workflows'],
+    ['title' => 'People-first communication', 'text' => 'Patient, professional client care'],
+    ['title' => 'Detail-oriented', 'text' => 'Accurate data and tidy records'],
+    ['title' => 'Digital-ready mindset', 'text' => 'Quick to learn new tools'],
 ];
 
-$tools = ['Google Workspace', 'Microsoft Office', 'Canva', 'TikTok Shop'];
+$tools = ['Google Workspace', 'Microsoft Office', 'Canva', 'VS Code'];
 
 $processSteps = [
     ['icon' => 'bi-telephone', 'title' => 'Discovery call', 'text' => 'We talk through your goals, recurring tasks, and the tools you already use.'],
@@ -90,7 +90,6 @@ require APP_PATH . '/views/site/header.php';
         <ul class="trust-grid">
             <?php foreach ($highlights as $highlight): ?>
                 <li>
-                    <i class="bi <?= e($highlight['icon']) ?>" aria-hidden="true"></i>
                     <span>
                         <strong><?= e($highlight['title']) ?></strong>
                         <span><?= e($highlight['text']) ?></span>
@@ -112,7 +111,6 @@ require APP_PATH . '/views/site/header.php';
                 </h2>
                 <a href="about.php" class="text-link mt-4">
                     More about me
-                    <i class="bi bi-arrow-right" aria-hidden="true"></i>
                 </a>
             </div>
             <div class="col-lg-7 animate" style="--delay: 100ms">
@@ -169,7 +167,6 @@ require APP_PATH . '/views/site/header.php';
             </div>
             <a href="services.php" class="btn btn-ghost">
                 All services
-                <i class="bi bi-arrow-right" aria-hidden="true"></i>
             </a>
         </div>
 
@@ -290,7 +287,6 @@ require APP_PATH . '/views/site/header.php';
             </div>
             <a href="projects.php" class="btn btn-ghost">
                 See all work
-                <i class="bi bi-arrow-right" aria-hidden="true"></i>
             </a>
         </div>
 
@@ -344,8 +340,10 @@ require APP_PATH . '/views/site/header.php';
                 <h2 class="section-title">What people <span>are saying.</span></h2>
             </div>
             <a href="feedback.php#leave-feedback" class="btn btn-ghost">
-                <i class="bi bi-star" aria-hidden="true"></i>
-                Leave feedback
+                <svg class="bi-star" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" focusable="false">
+                    <path d="M2.866 14.85c-.078.444.36.791.746.593l4.39-2.256 4.389 2.256c.386.198.824-.149.746-.592l-.83-4.73 3.522-3.356c.33-.314.16-.888-.282-.95l-4.898-.696L8.465.792a.513.513 0 0 0-.927 0L5.354 5.12l-4.898.696c-.441.062-.612.636-.283.95l3.523 3.356-.83 4.73zm4.905-2.767-3.686 1.894.694-3.957a.56.56 0 0 0-.163-.505L1.71 6.745l4.052-.576a.53.53 0 0 0 .393-.288L8 2.223l1.847 3.658a.53.53 0 0 0 .393.288l4.052.575-2.906 2.77a.56.56 0 0 0-.163.506l.694 3.957-3.686-1.894a.5.5 0 0 0-.461 0z"/>
+                </svg>
+                Feedback
             </a>
         </div>
 
@@ -364,7 +362,6 @@ require APP_PATH . '/views/site/header.php';
                     </div>
                     <a href="feedback.php" class="text-link mt-4">
                         Read all feedback
-                        <i class="bi bi-arrow-right" aria-hidden="true"></i>
                     </a>
                 <?php else: ?>
                     <p class="empty-state h-100 mb-0">
@@ -393,7 +390,6 @@ require APP_PATH . '/views/site/header.php';
             <div class="cta-actions">
                 <a href="contact.php" class="btn btn-primary btn-lg">
                     Start a conversation
-                    <i class="bi bi-arrow-up-right" aria-hidden="true"></i>
                 </a>
                 <a href="mailto:<?= e(config('site.email')) ?>" class="cta-email" data-reach="email">
                     <i class="bi bi-envelope" aria-hidden="true"></i>

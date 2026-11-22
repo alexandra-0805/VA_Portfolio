@@ -81,6 +81,35 @@ require APP_PATH . '/views/site/header.php';
 
                     <div class="resume-entry">
                         <div>
+                            <h3>Mentora PH Recruitment &amp; Onboarding System</h3>
+                            <p class="resume-entry-role">Lead Developer</p>
+                        </div>
+                        <span class="resume-entry-icon" aria-hidden="true">
+                            <i class="bi bi-people"></i>
+                        </span>
+                        <ul>
+                            <li>Led a team in building a web-based HR recruitment system with AI-supported onboarding for HR admins, agents, interns, and Employee VA applicants.</li>
+                            <li>Built recruitment links, application forms with resume upload, training tracking, evaluations, messaging, and notifications.</li>
+                            <li>Developed AI resume screening and intern assessment that match applicant skills to each department's skill gaps, with a rules-based fallback.</li>
+                            <li>Added Google sign-in, email notifications, secure password resets, and consolidated reports exportable to PDF and CSV.</li>
+                        </ul>
+                        <div class="resume-tags" aria-label="Tools used">
+                            <span>PHP</span>
+                            <span>MySQL / MariaDB</span>
+                            <span>HTML</span>
+                            <span>CSS</span>
+                            <span>JavaScript</span>
+                            <span>XAMPP</span>
+                            <span>phpMyAdmin</span>
+                            <span>Git</span>
+                            <span>Google Sign-In (OAuth)</span>
+                            <span>Gmail SMTP</span>
+                            <span>AI APIs</span>
+                        </div>
+                    </div>
+
+                    <div class="resume-entry">
+                        <div>
                             <h3>Bakeshop Website Project</h3>
                             <p class="resume-entry-role">Front-End Developer</p>
                         </div>
@@ -159,7 +188,11 @@ require APP_PATH . '/views/site/header.php';
                         <span>Microsoft Office</span>
                         <span>Google Workspace</span>
                         <span>AI Tools</span>
-                        <span>Basic Web Development</span>
+                        <span>Web Development</span>
+                        <span>PHP &amp; MySQL</span>
+                        <span>Git</span>
+                        <span>AI Integration</span>
+                        <span>Lead Developer</span>
                     </div>
                 </section>
 

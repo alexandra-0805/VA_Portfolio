@@ -4,7 +4,7 @@
 document.addEventListener('DOMContentLoaded', () => {
 	// Sticky nav shadow + back-to-top button.
 	const topButton = document.getElementById('backToTop');
-	const siteNav = document.querySelector('.site-nav.fixed-top');
+	const siteNav = document.querySelector('.site-nav.fixed-top, .admin-topbar');
 	const onScroll = () => {
 		topButton?.classList.toggle('show', window.scrollY > 500);
 		siteNav?.classList.toggle('is-scrolled', window.scrollY > 12);
@@ -55,6 +55,32 @@ document.addEventListener('DOMContentLoaded', () => {
 		});
 	});
 	document.querySelectorAll('[data-print]').forEach((button) => button.addEventListener('click', () => window.print()));
+
+	// Admin tables: "See more" reveals the next rows in place (the link still works without JS).
+	document.querySelectorAll('[data-more-button]').forEach((button) => {
+		const wrapper = button.closest('[data-more-table]');
+		const table = wrapper?.parentElement.querySelector('table');
+		const count = wrapper?.querySelector('[data-more-count]');
+		const step = Number(button.dataset.moreStep) || 10;
+
+		button.addEventListener('click', (event) => {
+			if (!table) {
+				return;
+			}
+			event.preventDefault();
+			const hiddenRows = [...table.querySelectorAll('tr[data-more-row][hidden]')];
+			hiddenRows.slice(0, step).forEach((row) => row.removeAttribute('hidden'));
+
+			const total = table.querySelectorAll('tbody tr').length;
+			const shown = total - table.querySelectorAll('tr[data-more-row][hidden]').length;
+			if (count) {
+				count.textContent = shown >= total ? `Showing all ${total}` : `Showing ${shown} of ${total}`;
+			}
+			if (shown >= total) {
+				button.remove();
+			}
+		});
+	});
 
 	// Visitor + "reach me" signals for the owner's Gmail alerts (public pages only, see signal.php).
 	const { signalUrl, signalToken } = document.body.dataset;

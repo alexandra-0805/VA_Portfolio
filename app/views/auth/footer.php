@@ -6,6 +6,7 @@
             </div>
         </div>
     </main>
+    <script src="<?= e(asset('assets/js/theme.js')) ?>"></script>
     <script src="<?= e(asset('assets/js/auth.js')) ?>"></script>
     <script src="<?= e(asset('assets/js/motion.js')) ?>"></script>
 </body>

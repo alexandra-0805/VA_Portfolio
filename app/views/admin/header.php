@@ -7,48 +7,52 @@ $noIndex = true;
 $extraStyles = ['assets/css/admin.css'];
 $currentAdminPage = basename($_SERVER['SCRIPT_NAME'] ?? '');
 $adminNavigation = [
-    ['Dashboard', 'dashboard.php', 'bi-speedometer2'],
-    ['Projects', 'projects.php', 'bi-grid'],
-    ['Services', 'services.php', 'bi-stars'],
-    ['Skills', 'skills.php', 'bi-bar-chart'],
-    ['Certificates', 'certificates.php', 'bi-award'],
-    ['Messages', 'messages.php', 'bi-envelope'],
-    ['Feedback', 'feedback.php', 'bi-star'],
-    ['Visitors', 'visitors.php', 'bi-people'],
-    ['Reports', 'reports.php', 'bi-bar-chart-line'],
-    ['Resume', 'resume.php', 'bi-file-earmark-person'],
+    ['Dashboard', 'dashboard.php'],
+    ['Projects', 'projects.php'],
+    ['Services', 'services.php'],
+    ['Skills', 'skills.php'],
+    ['Certificates', 'certificates.php'],
+    ['Messages', 'messages.php'],
+    ['Feedback', 'feedback.php'],
+    ['Visitors', 'visitors.php'],
+    ['Reports', 'reports.php'],
+    ['Resume', 'resume.php'],
+    ['Settings', 'settings.php'],
 ];
+
+// The "Admin." logo returns to the section you're in (Dashboard on any other page).
+$adminHomePage = in_array($currentAdminPage, array_column($adminNavigation, 1), true)
+    ? $currentAdminPage
+    : 'dashboard.php';
 
 require APP_PATH . '/views/partials/head.php';
 ?>
 <body class="admin-body">
     <a class="skip-link" href="#admin-content">Skip to content</a>
-    <nav class="navbar site-nav admin-topbar">
+    <?php /* One header that stays pinned to the top while scrolling (see admin.css). */ ?>
+    <header class="navbar site-nav admin-topbar">
         <div class="container">
-            <a class="navbar-brand" href="<?= e(url('admin/dashboard.php')) ?>">Admin<span>.</span></a>
+            <a class="navbar-brand" href="<?= e(url('admin/' . $adminHomePage)) ?>">Admin<span>.</span></a>
+
+            <nav class="admin-nav-list" aria-label="Admin sections">
+                <?php /* $navLabel/$navPage: don't reuse $page, the editor pages need theirs. */ ?>
+                <?php foreach ($adminNavigation as $navIndex => [$navLabel, $navPage]): ?>
+                    <a class="admin-nav-link <?= $currentAdminPage === $navPage ? 'active' : '' ?>" style="--i: <?= $navIndex ?>" href="<?= e(url('admin/' . $navPage)) ?>" <?= $currentAdminPage === $navPage ? 'aria-current="page"' : '' ?>>
+                        <?= e($navLabel) ?>
+                    </a>
+                <?php endforeach; ?>
+            </nav>
+
             <div class="admin-topbar-actions">
-                <a class="admin-view-site" href="<?= e(url('index.php')) ?>" target="_blank" rel="noopener">View site</a>
+                <?php $themeToggleClass = ''; require APP_PATH . '/views/partials/theme_toggle.php'; ?>
                 <form method="post" action="<?= e(url('admin/auth/signout.php')) ?>">
                     <?= csrf_field() ?>
                     <button class="btn btn-outline-dark admin-signout" type="submit">
-                        <i class="bi bi-box-arrow-right" aria-hidden="true"></i>
                         Sign out
                     </button>
                 </form>
             </div>
         </div>
-    </nav>
-    <nav class="admin-nav-bar" aria-label="Admin sections">
-        <div class="container">
-            <div class="admin-nav-list">
-                <?php foreach ($adminNavigation as [$label, $page, $icon]): ?>
-                    <a class="admin-nav-link <?= $currentAdminPage === $page ? 'active' : '' ?>" href="<?= e(url('admin/' . $page)) ?>" <?= $currentAdminPage === $page ? 'aria-current="page"' : '' ?>>
-                        <i class="bi <?= e($icon) ?>" aria-hidden="true"></i>
-                        <?= e($label) ?>
-                    </a>
-                <?php endforeach; ?>
-            </div>
-        </div>
-    </nav>
+    </header>
     <main id="admin-content" class="container py-5">
         <?= render_alerts() ?>

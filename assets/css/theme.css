@@ -1,0 +1,224 @@
+/**
+ * Appearance settings: dark mode, accent colour presets and text size.
+ * Driven by attributes on <html> set in partials/head.php and assets/js/theme.js:
+ *   data-theme="light|dark"   data-accent="coral|teal|plum|blue"   data-text="sm|md|lg"
+ * Loaded last, so it only has to swap the colour tokens defined in style.css.
+ */
+
+/* Text size ---------------------------------------------------------------- */
+
+html[data-text="sm"] {
+    font-size: 93.75%;
+}
+
+html[data-text="lg"] {
+    font-size: 112.5%;
+}
+
+/* Accent colour presets (coral is the default in style.css) --------------- */
+
+[data-accent="teal"] {
+    --accent: #1c6b68;
+    --accent-dark: #155b59;
+    --accent-rgb: 28, 107, 104;
+    --accent-soft: #e5f0ec;
+}
+
+[data-accent="plum"] {
+    --accent: #8a4f9e;
+    --accent-dark: #6f3d80;
+    --accent-rgb: 138, 79, 158;
+    --accent-soft: #f3e9f6;
+}
+
+[data-accent="blue"] {
+    --accent: #2f6fb5;
+    --accent-dark: #255b96;
+    --accent-rgb: 47, 111, 181;
+    --accent-soft: #e8f0fa;
+}
+
+/* Dark mode ----------------------------------------------------------------- */
+
+/* A soft dark: charcoal-green greys rather than near-black. */
+[data-theme="dark"] {
+    --ink: #edf1ee;
+    --muted: #b1bcb6;
+    --cream: #252d2a;
+    --paper: #2e3733;
+    --paper-rgb: 46, 55, 51;
+    --line: #414c48;
+    --teal: #6cc4b7;
+    --teal-soft: #34453f;
+    --star: #ebb942;
+    --accent: #e57a59;
+    --accent-dark: #cf6544;
+    --accent-rgb: 229, 122, 89;
+    --accent-soft: #4a3229;
+    --deep: #1c2321;
+    --surface: #353f3b;
+    --surface-2: #2a3330;
+    --chip: rgba(255, 255, 255, .08);
+    --tint: #2a3431;
+    --tint-2: #2d3834;
+    --tint-3: #303b37;
+    --track: #3d4844;
+    --tag: #3a4541;
+    --blush: #4a3a33;
+    --footer-bg: #1f2624;
+    --shadow: 0 14px 34px rgba(0, 0, 0, .25);
+    --shadow-soft: 0 4px 18px rgba(0, 0, 0, .18);
+
+    /* Bootstrap components (tables, inputs, alerts) use the same palette. */
+    --bs-body-bg: var(--paper);
+    --bs-body-color: var(--ink);
+    --bs-emphasis-color: var(--ink);
+    --bs-secondary-color: var(--muted);
+    --bs-border-color: var(--line);
+    --bs-tertiary-bg: var(--surface);
+
+    color-scheme: dark;
+}
+
+[data-theme="dark"][data-accent="teal"] {
+    --accent: #5bbcae;
+    --accent-dark: #47a194;
+    --accent-rgb: 91, 188, 174;
+    --accent-soft: #34453f;
+}
+
+[data-theme="dark"][data-accent="plum"] {
+    --accent: #bb86cc;
+    --accent-dark: #a46fb5;
+    --accent-rgb: 187, 134, 204;
+    --accent-soft: #433749;
+}
+
+[data-theme="dark"][data-accent="blue"] {
+    --accent: #6aa6e6;
+    --accent-dark: #538dcc;
+    --accent-rgb: 106, 166, 230;
+    --accent-soft: #33404f;
+}
+
+/* A few things that were tuned for a light page. */
+[data-theme="dark"] .bg-white {
+    background-color: var(--surface) !important;
+}
+
+[data-theme="dark"] .table {
+    --bs-table-bg: transparent;
+    --bs-table-color: var(--ink);
+    --bs-table-border-color: var(--line);
+}
+
+[data-theme="dark"] .admin-table tbody tr:hover {
+    background: rgba(255, 255, 255, .04);
+}
+
+[data-theme="dark"] .btn-outline-dark {
+    --bs-btn-color: var(--ink);
+    --bs-btn-border-color: rgba(232, 237, 233, .55);
+    --bs-btn-hover-color: var(--cream);
+    --bs-btn-hover-bg: var(--ink);
+    --bs-btn-hover-border-color: var(--ink);
+    --bs-btn-active-color: var(--cream);
+    --bs-btn-active-bg: var(--ink);
+    --bs-btn-active-border-color: var(--ink);
+}
+
+[data-theme="dark"] .site-nav.fixed-top.is-scrolled,
+[data-theme="dark"] .admin-topbar {
+    border-bottom-color: var(--line);
+}
+
+[data-theme="dark"] .cta-card,
+[data-theme="dark"] .trust-strip {
+    box-shadow: inset 0 0 0 1px var(--line);
+}
+
+[data-theme="dark"] .form-control::placeholder {
+    color: #8a9690;
+}
+
+/* Glows blend by darkening on a light page; on a dark page they need to lighten. */
+[data-theme="dark"] .cursor-glow,
+[data-theme="dark"] .fx-spot-glow {
+    mix-blend-mode: screen;
+    opacity: .55;
+}
+
+[data-theme="dark"] .cursor-glow {
+    opacity: 0;
+}
+
+[data-theme="dark"] .cursor-visible .cursor-glow {
+    opacity: .55;
+}
+
+[data-theme="dark"] .fx-spot:not(:hover) > .fx-spot-glow {
+    opacity: 0;
+}
+
+/* Theme toggle button (public nav and admin header) ------------------------- */
+
+.theme-toggle {
+    width: 40px;
+    height: 40px;
+    display: inline-grid;
+    flex: 0 0 auto;
+    place-items: center;
+    padding: 0;
+    color: var(--ink);
+    background: transparent;
+    border: 1px solid var(--line);
+    border-radius: 50%;
+    transition: color .2s ease, background-color .2s ease, border-color .2s ease, transform .3s ease;
+}
+
+.theme-toggle:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+}
+
+.theme-toggle:focus-visible {
+    outline: 3px solid rgba(var(--accent-rgb), .35);
+    outline-offset: 2px;
+}
+
+.theme-toggle svg {
+    width: 18px;
+    height: 18px;
+}
+
+/* Show the moon in light mode (switch to dark) and the sun in dark mode. */
+.theme-toggle .icon-sun,
+[data-theme="dark"] .theme-toggle .icon-moon {
+    display: none;
+}
+
+[data-theme="dark"] .theme-toggle .icon-sun {
+    display: block;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    .theme-toggle svg {
+        transition: transform .45s cubic-bezier(.34, 1.56, .64, 1);
+    }
+
+    .theme-toggle:hover svg {
+        transform: rotate(-18deg) scale(1.1);
+    }
+
+    [data-theme="dark"] .theme-toggle:hover svg {
+        transform: rotate(45deg) scale(1.1);
+    }
+
+    /* Colours fade instead of snapping when the theme changes (class set briefly by theme.js). */
+    .theme-switching,
+    .theme-switching *,
+    .theme-switching *::before,
+    .theme-switching *::after {
+        transition: background-color .35s ease, color .35s ease, border-color .35s ease, fill .35s ease !important;
+    }
+}

@@ -15,6 +15,22 @@
     --shadow: 0 14px 34px rgba(23, 34, 31, .07);
     --shadow-soft: 0 4px 18px rgba(23, 34, 31, .035);
     --radius: 12px;
+
+    /* Theme tokens (dark mode and accent presets override these in theme.css). */
+    --accent-rgb: 216, 101, 67;
+    --accent-soft: #fff1e9;
+    --paper-rgb: 255, 253, 248;
+    --deep: #17221f;
+    --surface: #fff;
+    --surface-2: #fbfaf5;
+    --chip: rgba(255, 255, 255, .7);
+    --tint: #eef3ee;
+    --tint-2: #e3eee8;
+    --tint-3: #e8f0ea;
+    --track: #e7ebe5;
+    --tag: #eef1eb;
+    --blush: #f4dcd2;
+    --footer-bg: #e8eee8;
 }
 
 * {
@@ -58,7 +74,7 @@ select:focus-visible {
     z-index: 1100;
     padding: .65rem 1rem;
     color: #fff;
-    background: var(--ink);
+    background: var(--deep);
     border-radius: 8px;
     font-size: .85rem;
     font-weight: 700;
@@ -73,7 +89,7 @@ select:focus-visible {
 }
 
 .site-nav {
-    background: rgba(255, 253, 248, .9);
+    background: rgba(var(--paper-rgb), .9);
     border-bottom: 1px solid rgba(23, 34, 31, .08);
     box-shadow: 0 8px 24px rgba(23, 34, 31, .04);
     backdrop-filter: blur(14px);
@@ -82,7 +98,7 @@ select:focus-visible {
 .site-nav.fixed-top {
     padding-top: 1rem;
     padding-bottom: 1rem;
-    background: rgba(255, 253, 248, 0);
+    background: rgba(var(--paper-rgb), 0);
     border-bottom-color: transparent;
     box-shadow: none;
     backdrop-filter: none;
@@ -93,7 +109,7 @@ select:focus-visible {
 .site-nav.fixed-top.is-scrolled {
     padding-top: .55rem;
     padding-bottom: .55rem;
-    background: rgba(255, 253, 248, .92);
+    background: rgba(var(--paper-rgb), .92);
     border-bottom-color: rgba(23, 34, 31, .08);
     box-shadow: 0 8px 24px rgba(23, 34, 31, .05);
     backdrop-filter: blur(14px);
@@ -193,7 +209,7 @@ select:focus-visible {
 .btn-primary:focus-visible {
     background: var(--accent-dark);
     border-color: var(--accent-dark);
-    box-shadow: 0 10px 22px rgba(216, 101, 67, .2);
+    box-shadow: 0 10px 22px rgba(var(--accent-rgb), .2);
     transform: translateY(-2px);
 }
 
@@ -224,7 +240,7 @@ select:focus-visible {
 .btn-ghost:hover,
 .btn-ghost:focus-visible {
     color: var(--ink);
-    background: #fff;
+    background: var(--surface);
     border-color: var(--ink);
     box-shadow: 0 8px 18px rgba(23, 34, 31, .08);
     transform: translateY(-2px);
@@ -267,7 +283,7 @@ select:focus-visible {
     position: relative;
     overflow: hidden;
     padding: 8.5rem 0 4.5rem;
-    background: linear-gradient(135deg, var(--cream) 0%, #eef3ee 55%, #e3eee8 100%);
+    background: linear-gradient(135deg, var(--cream) 0%, var(--tint) 55%, var(--tint-2) 100%);
 }
 
 .hero-glow {
@@ -275,7 +291,7 @@ select:focus-visible {
     inset: 0;
     pointer-events: none;
     background:
-    radial-gradient(circle at 85% 20%, rgba(216, 101, 67, .12), transparent 38%),
+    radial-gradient(circle at 85% 20%, rgba(var(--accent-rgb), .12), transparent 38%),
     radial-gradient(circle at 10% 90%, rgba(28, 107, 104, .1), transparent 40%);
 }
 
@@ -285,7 +301,7 @@ select:focus-visible {
     gap: .55rem;
     padding: .4rem .85rem .4rem .7rem;
     color: var(--teal);
-    background: rgba(255, 255, 255, .7);
+    background: var(--chip);
     border: 1px solid rgba(28, 107, 104, .2);
     border-radius: 999px;
     font-size: .8rem;
@@ -356,7 +372,7 @@ select:focus-visible {
 .hero-tools-list li {
     padding: .3rem .75rem;
     color: var(--ink);
-    background: rgba(255, 255, 255, .65);
+    background: var(--chip);
     border: 1px solid var(--line);
     border-radius: 999px;
     font-size: .8rem;
@@ -374,7 +390,7 @@ select:focus-visible {
     inset: 8% 0 0;
     z-index: -1;
     border-radius: 45% 45% 18px 18px;
-    background: linear-gradient(160deg, var(--teal-soft), #f4dcd2);
+    background: linear-gradient(160deg, var(--teal-soft), var(--blush));
 }
 
 .hero-portrait-frame .portrait-placeholder {
@@ -584,7 +600,7 @@ h6,
 }
 
 .certificate-card:hover {
-    border-color: rgba(216, 101, 67, .45);
+    border-color: rgba(var(--accent-rgb), .45);
     box-shadow: var(--shadow);
     transform: translateY(-4px);
 }
@@ -866,7 +882,7 @@ h6,
     top: 2.6rem;
     right: -1.25rem;
     width: 1.25rem;
-    border-top: 2px dashed rgba(216, 101, 67, .45);
+    border-top: 2px dashed rgba(var(--accent-rgb), .45);
 }
 
 .process-step:last-child::after {
@@ -886,7 +902,7 @@ h6,
     display: grid;
     place-items: center;
     color: #fff;
-    background: var(--ink);
+    background: var(--deep);
     border-radius: 12px;
     font-size: 1.1rem;
 }
@@ -951,7 +967,7 @@ h6,
     overflow: hidden;
     padding: clamp(2rem, 5vw, 3.5rem);
     color: #f8f4ea;
-    background: var(--ink);
+    background: var(--deep);
     border-radius: 20px;
     isolation: isolate;
 }
@@ -965,7 +981,7 @@ h6,
     width: 26rem;
     height: 26rem;
     border-radius: 50%;
-    background: radial-gradient(circle, rgba(216, 101, 67, .35), transparent 65%);
+    background: radial-gradient(circle, rgba(var(--accent-rgb), .35), transparent 65%);
 }
 
 .cta-card .section-title span {
@@ -1009,7 +1025,7 @@ h6,
     display: flex;
     align-items: center;
     padding: 8rem 0 4rem;
-    background: linear-gradient(135deg, #e8f0ea, var(--cream));
+    background: linear-gradient(135deg, var(--tint-3), var(--cream));
 }
 
 .project-back-link {
@@ -1058,7 +1074,7 @@ h6,
 .tech-pill {
     padding: .28rem .65rem;
     border-radius: 50px;
-    background: #eef1eb;
+    background: var(--tag);
     color: var(--teal);
     font-size: .72rem;
     font-weight: 700;
@@ -1070,7 +1086,7 @@ h6,
 
 .progress {
     height: 7px;
-    background: #e7ebe5;
+    background: var(--track);
 }
 
 .progress-bar {
@@ -1079,7 +1095,7 @@ h6,
 
 .trust-strip {
     padding: 1.6rem 0;
-    background: var(--ink);
+    background: var(--deep);
     color: #fff;
 }
 
@@ -1105,18 +1121,6 @@ h6,
     border-left: 0;
 }
 
-.trust-grid > li > i {
-    width: 2.4rem;
-    height: 2.4rem;
-    display: grid;
-    flex: 0 0 auto;
-    place-items: center;
-    color: #9bcac0;
-    background: rgba(255, 255, 255, .07);
-    border-radius: 10px;
-    font-size: 1.1rem;
-}
-
 .trust-grid > li > span {
     display: flex;
     flex-direction: column;
@@ -1130,6 +1134,14 @@ h6,
 .trust-grid > li > span > span {
     color: rgba(255, 255, 255, .66);
     font-size: .78rem;
+    transition: color .25s ease;
+}
+
+/* Hover: the line below the title brightens (the lift + glow is in motion.css). */
+@media (hover: hover) {
+    .trust-grid > li:hover > span > span {
+        color: #fff;
+    }
 }
 
 .contact-kicker {
@@ -1151,10 +1163,12 @@ h6,
     place-items: center;
     margin-left: auto;
     color: #fff;
-    background: var(--accent);
+    background: rgba(var(--accent-rgb), .45);
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
     border: 0;
     border-radius: 50%;
-    box-shadow: 0 12px 30px rgba(23, 34, 31, .2);
+    box-shadow: 0 8px 20px rgba(23, 34, 31, .08);
     font-size: 1.35rem;
     transition: transform .2s ease, background-color .2s ease, box-shadow .2s ease;
 }
@@ -1167,6 +1181,7 @@ h6,
 
 .portfolio-chatbot-launcher:focus-visible {
     outline: 0;
+    background: var(--accent);
     box-shadow: 0 0 0 .2rem rgba(28, 107, 104, .25), 0 12px 30px rgba(23, 34, 31, .2);
 }
 
@@ -1205,7 +1220,7 @@ h6,
     gap: .75rem;
     padding: .9rem 1rem;
     color: #fff;
-    background: var(--ink);
+    background: var(--deep);
 }
 
 .portfolio-chatbot-eyebrow {
@@ -1295,7 +1310,7 @@ h6,
     gap: .75rem;
     overflow-y: auto;
     padding: 1.5rem;
-    background: #fbfaf5;
+    background: var(--surface-2);
     scrollbar-color: rgba(28, 107, 104, .35) transparent;
 }
 
@@ -1386,7 +1401,7 @@ h6,
 
 .portfolio-chatbot-prompts {
     padding: 1rem 1.5rem .75rem;
-    background: #fbfaf5;
+    background: var(--surface-2);
 }
 
 .portfolio-chatbot-prompts-label {
@@ -1430,13 +1445,13 @@ h6,
     gap: .65rem;
     align-items: center;
     padding: .7rem 1rem 1.45rem;
-    background: #fbfaf5;
+    background: var(--surface-2);
 }
 
 .portfolio-chatbot-form .form-control {
     min-width: 0;
     padding: .7rem .8rem;
-    background: #fff;
+    background: var(--surface);
 }
 
 .portfolio-chatbot-character-count {
@@ -1476,7 +1491,7 @@ h6,
     justify-content: space-between;
     gap: 1rem;
     padding: 0 1rem 1rem;
-    background: #fbfaf5;
+    background: var(--surface-2);
 }
 
 .portfolio-chatbot-disclaimer {
@@ -1788,12 +1803,12 @@ textarea.form-control {
 .form-control:focus,
 .form-select:focus {
     border-color: var(--accent);
-    background: #fff;
-    box-shadow: 0 0 0 .2rem rgba(216, 101, 67, .15);
+    background: var(--surface);
+    box-shadow: 0 0 0 .2rem rgba(var(--accent-rgb), .15);
 }
 
 .site-footer {
-    background: #e8eee8;
+    background: var(--footer-bg);
 }
 
 .site-footer .footer-grid {
@@ -1879,7 +1894,7 @@ textarea.form-control {
     margin-left: .35rem;
     place-items: center;
     border-radius: 50%;
-    background: var(--ink);
+    background: var(--deep);
     color: #fff;
     text-decoration: none;
 }
@@ -1899,12 +1914,16 @@ textarea.form-control {
     z-index: 10;
     border: 0;
     border-radius: 50%;
-    background: var(--ink);
+    background: rgba(23, 34, 31, .4);
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
     color: #fff;
-    box-shadow: 0 10px 24px rgba(23, 34, 31, .18);
+    box-shadow: 0 6px 16px rgba(23, 34, 31, .08);
+    transition: background-color .2s ease;
 }
 
-.back-top:hover {
+.back-top:hover,
+.back-top:focus-visible {
     background: var(--accent);
 }
 
@@ -1927,7 +1946,7 @@ textarea.form-control {
 
 .page-banner {
     padding: 7.5rem 0 3.5rem;
-    background: linear-gradient(135deg, #e8f0ea, var(--cream));
+    background: linear-gradient(135deg, var(--tint-3), var(--cream));
 }
 
 .alert {
@@ -1963,7 +1982,7 @@ textarea.form-control {
 .resume-hero {
     padding: 9rem 0 4.5rem;
     border-bottom: 1px solid var(--line);
-    background: linear-gradient(135deg, #e8f0ea 0%, var(--cream) 72%);
+    background: linear-gradient(135deg, var(--tint-3) 0%, var(--cream) 72%);
 }
 
 .resume-hero-grid {
@@ -2035,7 +2054,7 @@ textarea.form-control {
 
 .resume-action .btn {
     padding: .8rem 1.15rem;
-    box-shadow: 0 10px 22px rgba(216, 101, 67, .2);
+    box-shadow: 0 10px 22px rgba(var(--accent-rgb), .2);
 }
 
 .resume-content {
@@ -2121,7 +2140,7 @@ textarea.form-control {
     right: 0;
     place-items: center;
     border-radius: 8px;
-    background: #e8f0ea;
+    background: var(--tint-3);
     color: var(--teal);
     font-size: 1.1rem;
 }
@@ -2139,6 +2158,10 @@ textarea.form-control {
 
 .resume-entry li:last-child {
     margin-bottom: 0;
+}
+
+.resume-entry .resume-tags {
+    margin-top: .9rem;
 }
 
 .resume-side {
@@ -2417,7 +2440,7 @@ textarea.form-control {
     .site-nav.fixed-top {
         padding-top: .6rem;
         padding-bottom: .6rem;
-        background: rgba(255, 253, 248, .96);
+        background: rgba(var(--paper-rgb), .96);
         border-bottom-color: rgba(23, 34, 31, .08);
         backdrop-filter: blur(14px);
     }

@@ -17,6 +17,12 @@ PALIPARAN III SENIOR HIGH SCHOOL | Cavite, PH
 Accountancy and Business Management | 2023 - 2024
 
 EXPERIENCES
+MENTORA PH RECRUITMENT & ONBOARDING SYSTEM - Lead Developer
+- Led a team in building a web-based HR recruitment system with AI-supported onboarding.
+- Built recruitment links, applications with resume upload, training tracking, evaluations, and messaging.
+- Developed AI resume screening and intern assessment matched to department skill gaps.
+- Added Google sign-in, email notifications, password resets, and PDF/CSV reports.
+- Tools: PHP, MySQL/MariaDB, HTML, CSS, JavaScript, XAMPP, phpMyAdmin, Git, Google OAuth, Gmail SMTP, AI APIs
 BAKESHOP WEBSITE PROJECT - Front-End Developer
 - Collaborated with clients to gather requirements and implement solutions.
 - Demonstrated attention to detail, teamwork, and effective communication.
@@ -40,7 +46,7 @@ Visual Graphic Design NC 2 - Feb. 2026
 SKILLS & TOOLS
 Administrative Support | Email & Client Communication | Data Entry | Internet Research
 File Management | Customer Support | Canva Design | Microsoft Office | Google Workspace
-AI Tools | Basic Web Development'''
+AI Tools | Web Development | PHP & MySQL | Git | AI Integration | Team Leadership'''
 
 def esc(value):
     return value.replace('\\', '\\\\').replace('(', '\\(').replace(')', '\\)')
