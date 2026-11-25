@@ -54,6 +54,9 @@ return [
         // Public admin registration stays closed unless enabled in the private file.
         'signup_enabled' => false,
         'idle_timeout_minutes' => 120,
+        // Opens admin/setup.php (first admin on a host without a command line).
+        // Set a long random value only in the private file, and remove it after setup.
+        'setup_token' => '',
     ],
 
     // Public profile details shown across the site (not secret).

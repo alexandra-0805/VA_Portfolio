@@ -36,9 +36,11 @@ function base_path(): string
     if ($basePath === null) {
         $documentRoot = realpath($_SERVER['DOCUMENT_ROOT'] ?? '') ?: '';
         $root = realpath(ROOT_PATH) ?: ROOT_PATH;
+        // Some shared hosts report a document root that does not match the real
+        // folder path; then fall back to the path of the configured app.url.
         $relative = $documentRoot !== '' && str_starts_with(strtolower($root), strtolower($documentRoot))
             ? substr($root, strlen($documentRoot))
-            : '';
+            : (string) parse_url((string) config('app.url'), PHP_URL_PATH);
         $basePath = rtrim(str_replace('\\', '/', $relative), '/');
     }
 

@@ -16,9 +16,17 @@ function start_secure_session(): void
         'path' => base_path() . '/',
         'httponly' => true,
         'samesite' => 'Lax',
-        'secure' => !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off',
+        'secure' => request_is_https(),
     ]);
     session_start();
+}
+
+/** True for HTTPS requests, including hosts that end HTTPS at a proxy in front of PHP. */
+function request_is_https(): bool
+{
+    return (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
+        || strtolower((string) ($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '')) === 'https'
+        || (string) ($_SERVER['SERVER_PORT'] ?? '') === '443';
 }
 
 function client_ip(): string

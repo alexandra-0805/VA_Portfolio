@@ -1,5 +1,7 @@
 # Uploaded files are data, never code.
-Options -Indexes -ExecCGI
+# No "-ExecCGI" here: InfinityFree rejects it with a 500 error for the whole folder.
+# Scripts are still blocked by the handler and file-type rules below.
+Options -Indexes
 RemoveHandler .php .phtml .php3 .php4 .php5 .php7 .phar .pl .py .cgi .sh
 RemoveType .php .phtml .php3 .php4 .php5 .php7 .phar
 <IfModule php_module>

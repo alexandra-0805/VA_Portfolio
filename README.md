@@ -12,6 +12,7 @@ VA_Portfolio/
 ├── admin/                                    Admin panel (sign-in required)
 │   ├── dashboard.php, messages.php, reports.php, resume.php
 │   ├── projects.php, services.php, skills.php, certificates.php   (generic editor)
+│   ├── setup.php                             One-time live-host setup (token-locked)
 │   └── auth/                                 signin, signup, forgot/reset password, signout
 ├── app/                 PRIVATE – blocked from the web
 │   ├── bootstrap.php    Required by every page: config, session, helpers
@@ -23,7 +24,7 @@ VA_Portfolio/
 │   └── views/           Layouts: partials/ (head, chatbot), site/, admin/, auth/
 ├── assets/
 │   ├── css/style.css    Public site styles   ·  css/admin.css  Admin-only styles
-│   ├── js/main.js       Shared behavior      ·  js/chatbot.js, js/auth.js
+│   ├── js/main.js       Shared behavior      ·  js/assistant.js (chatbot), js/auth.js
 │   ├── images/          Portrait, favicon
 │   └── docs/            Downloadable resume PDF
 ├── uploads/             Admin image uploads (scripts can never run here)
@@ -52,6 +53,35 @@ E:\xampp_db\private\va_portfolio\     OUTSIDE the project and the web folder
    Run the same command again to reset a password.
 4. `composer install` if `vendor/` is missing.
 5. Open `http://localhost/VA_Portfolio/`. The admin panel is at `/admin/`.
+
+## Going live on InfinityFree (same admin panel)
+
+InfinityFree has no command line and no folder outside the website, so the live site
+keeps its settings in `app/config.local.php` and creates its admin with `admin/setup.php`.
+
+1. **Create the database.** In the InfinityFree control panel open *MySQL Databases*,
+   create one (e.g. `portfolio`), and note the host (`sql123.infinityfree.com`),
+   database name (`if0_12345678_portfolio`), username (`if0_12345678`) and password.
+2. **Write the live settings.** Copy `app/secrets.example.php` to `app/config.local.php`
+   and fill in the InfinityFree database values, your live `app.url`
+   (e.g. `https://yourname.infinityfreeapp.com`), the Gmail settings, and a setup token:
+   ```php
+   'admin' => ['setup_token' => 'a-long-random-value-of-16-or-more-characters'],
+   ```
+3. **Upload the site** into `htdocs/` with the file manager or FTP: every file and folder
+   in this project, including `vendor/`, `uploads/`, the `.htaccess` files and
+   `app/config.local.php`. Skip `.git/`.
+4. **Run setup.** Open `https://yourname.infinityfreeapp.com/admin/setup.php`. It checks
+   the settings and the database connection, then with the token it creates all tables,
+   can load the portfolio content from `seed.sql`, and creates your admin account.
+   You do not need to import any SQL in phpMyAdmin (`schema.sql` uses
+   `CREATE DATABASE`, which InfinityFree blocks).
+5. **Lock it.** Sign in at `/admin/`, then delete the `setup_token` line from
+   `app/config.local.php` and upload it again. `setup.php` also stops working by itself
+   once an admin account exists, so it cannot be used to add a second admin.
+
+After that the live admin panel works the same as the local one. Content edited locally
+does not sync to the live database; edit live content in the live admin panel.
 
 ## Feedback and Gmail alerts
 

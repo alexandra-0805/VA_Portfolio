@@ -15,7 +15,8 @@ define('APP_PATH', __DIR__);
 //     app/ is blocked from the web (.htaccess) and the file is ignored by git.
 define('SECRETS_FILE', (static function (): string {
     foreach ([dirname(ROOT_PATH, 2) . '/private/va_portfolio/config.php', APP_PATH . '/config.local.php'] as $file) {
-        if (is_file($file)) {
+        // @: shared hosts (open_basedir) warn when looking outside the site folder.
+        if (@is_file($file)) {
             return $file;
         }
     }

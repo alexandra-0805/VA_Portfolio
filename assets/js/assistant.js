@@ -1,6 +1,9 @@
 /**
  * Rule-based chat assistant. The same widget serves the public site and
  * the admin panel; the `data-chatbot-context` attribute picks the answers.
+ *
+ * Keep "chat" out of this file's name: InfinityFree answers 403 Forbidden to
+ * any URL containing "chat", which silently disables the widget on the live site.
  */
 (() => {
 	const ANSWERS = {
